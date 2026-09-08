@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="color-scheme" content="light">
+<title>Посещаемость группы</title>
+<style>
+:root{
+  --bg:#f3f4f9;
+  --card:#ffffff;
+  --ink:#1c2033;
+  --muted:#5d6277;
+  --line:#e3e5ef;
+  --accent:#33408f;
+  --accent-ink:#242c66;
+  --present:#187a48;
+  --present-bg:#e1f4ea;
+  --late:#8f5606;
+  --late-bg:#faf0dd;
+  --absent:#b02f2f;
+  --absent-bg:#fbe7e7;
+  --unmarked:#8b8fa3;
+  --radius:14px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:16px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+.app{max-width:640px;margin:0 auto;padding:16px 14px 56px;}
+
+header.top{padding:6px 2px 14px;}
+.group-title{font-size:22px;font-weight:700;margin:0;color:var(--accent-ink);}
+h2.group-sub, .group-sub{font-size:13px;color:var(--muted);margin:2px 0 14px;font-weight:600;}
+
+.daterow{display:flex;align-items:center;gap:8px;}
+.daterow button{
+  width:44px;height:44px;flex:none;border-radius:11px;border:1px solid var(--line);
+  background:var(--card);font-size:19px;color:var(--accent);
+}
+.daterow button:active{background:var(--bg);}
+.datebox{
+  flex:1;background:var(--card);border:1px solid var(--line);border-radius:11px;
+  padding:5px 10px;display:flex;flex-direction:column;align-items:center;min-height:44px;justify-content:center;
+}
+.datebox input[type=date]{
+  border:none;font-size:15px;font-weight:700;color:var(--ink);background:transparent;
+  width:100%;text-align:center;font-family:inherit;
+}
+.weekday{font-size:12px;color:var(--muted);text-transform:capitalize;}
+
+.tabs{display:flex;gap:6px;margin:16px 0 12px;background:var(--card);padding:4px;border-radius:12px;border:1px solid var(--line);}
+.tab{flex:1;border:none;background:transparent;padding:10px 4px;border-radius:9px;font-size:14px;color:var(--muted);font-weight:600;}
+.tab.active{background:var(--accent);color:#fff;}
+
+.panel{display:none;}
+.panel.active{display:block;}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
+
+.filters{display:flex;gap:8px;margin-bottom:12px;}
+.filters input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;min-width:0;}
+.filters select{padding:11px 8px;border-radius:10px;border:1px solid var(--line);font-size:13px;background:var(--card);color:var(--ink);}
+
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px;}
+.summary-cell{background:var(--bg);border-radius:10px;padding:8px 4px;text-align:center;border-top:3px solid var(--line);}
+.summary-cell .num{font-size:18px;font-weight:700;display:block;line-height:1.2;}
+.summary-cell .lbl{font-size:10.5px;color:var(--muted);}
+.summary-cell.c-present{border-top-color:var(--present);}
+.summary-cell.c-late{border-top-color:var(--late);}
+.summary-cell.c-absent{border-top-color:var(--absent);}
+.summary-cell.c-none{border-top-color:var(--unmarked);}
+
+.refresh-row{display:flex;justify-content:flex-end;margin:10px 0 2px;}
+.refresh-row button{border:none;background:none;color:var(--accent);font-size:13px;font-weight:600;padding:4px 2px;}
+
+details.bulk{margin-top:8px;}
+details.bulk summary{font-size:13px;color:var(--accent-ink);font-weight:600;cursor:pointer;padding:6px 0;list-style:none;}
+details.bulk summary::-webkit-details-marker{display:none;}
+details.bulk summary::before{content:"▸ ";}
+details.bulk[open] summary::before{content:"▾ ";}
+details.bulk .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:6px;}
+details.bulk button{
+  border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--ink);font-weight:600;
+}
+
+ul.student-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.student-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
+.student-name{font-size:15px;font-weight:600;margin-bottom:8px;}
+.status-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.status-btn{
+  border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:11px 4px;font-size:13px;font-weight:700;color:var(--muted);
+  min-height:44px;
+}
+.status-btn.present.active{background:var(--present-bg);border-color:var(--present);color:var(--present);}
+.status-btn.late.active{background:var(--late-bg);border-color:var(--late);color:var(--late);}
+.status-btn.absent.active{background:var(--absent-bg);border-color:var(--absent);color:var(--absent);}
+
+.empty-hint{text-align:center;color:var(--muted);font-size:14px;padding:28px 8px;}
+
+table.stats-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+table.stats-table th,table.stats-table td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line);}
+table.stats-table th{color:var(--muted);font-weight:600;font-size:11.5px;}
+table.stats-table td.num,table.stats-table th.num{text-align:center;}
+table.stats-table tr:last-child td{border-bottom:none;}
+
+.settings-row{display:flex;gap:8px;}
+.settings-row input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;min-width:0;}
+.settings-row button{border:none;background:var(--accent);color:#fff;border-radius:10px;padding:0 16px;font-size:14px;font-weight:600;white-space:nowrap;}
+
+ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.roster-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;}
+.roster-row button{border:none;background:none;color:var(--absent);font-size:16px;padding:2px 6px;font-weight:700;}
+
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px;}
+
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);
+  background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;
+  opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;max-width:88%;text-align:center;z-index:30;
+}
+.toast.show{opacity:1;transform:translate(-50%,0);}
+
+.loading-overlay{
+  position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);z-index:20;padding:20px;
+}
+.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion: reduce){
+  .spinner{animation:none;border-top-color:var(--accent);}
+  .toast{transition:none;}
+}
+</style>
+</head>
+<body>
+
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="spinner"></div>
+  <div>Загрузка…</div>
+</div>
+
+<div class="app" id="app" style="display:none;">
+
+  <header class="top">
+    <h1 class="group-title" id="groupTitleText">Группа</h1>
+    <div class="group-sub">Учёт посещаемости</div>
+    <div class="daterow">
+      <button type="button" id="prevDay" aria-label="Предыдущий день">‹</button>
+      <div class="datebox">
+        <input type="date" id="datePicker">
+        <span class="weekday" id="weekdayLabel"></span>
+      </div>
+      <button type="button" id="nextDay" aria-label="Следующий день">›</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button type="button" class="tab active" data-tab="mark">Отметка</button>
+    <button type="button" class="tab" data-tab="stats">Статистика</button>
+    <button type="button" class="tab" data-tab="settings">Группа</button>
+  </nav>
+
+  <section class="panel active" id="panel-mark">
+    <div class="card">
+      <div class="filters">
+        <input type="text" id="searchInput" placeholder="Найти по фамилии…">
+        <select id="statusFilter" aria-label="Фильтр по статусу">
+          <option value="all">Все</option>
+          <option value="none">Не отмечены</option>
+          <option value="P">Был</option>
+          <option value="L">Опоздал</option>
+          <option value="A">Не был</option>
+        </select>
+      </div>
+      <div class="summary-grid" id="summaryLine"></div>
+      <div class="refresh-row"><button type="button" id="refreshBtn">↻ Обновить</button></div>
+      <details class="bulk">
+        <summary>Действия старосты</summary>
+        <div class="bulk-actions">
+          <button type="button" id="markAllPresentBtn">Отметить всех как «Был»</button>
+          <button type="button" id="clearDayBtn">Очистить день</button>
+        </div>
+      </details>
+    </div>
+    <ul class="student-list" id="studentList"></ul>
+  </section>
+
+  <section class="panel" id="panel-stats">
+    <div class="card">
+      <div class="empty-hint" id="statsLoading">Загружаю статистику…</div>
+      <table class="stats-table" id="statsTable" hidden>
+        <thead><tr><th>Студент</th><th class="num">Был</th><th class="num">Опозд.</th><th class="num">Не был</th><th class="num">%</th></tr></thead>
+        <tbody id="statsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-settings">
+    <div class="card">
+      <h2 class="group-sub" style="margin-bottom:10px;">Название группы</h2>
+      <div class="settings-row">
+        <input type="text" id="groupNameInput" placeholder="Например, ИУ5-53">
+        <button type="button" id="saveGroupNameBtn">Сохранить</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="group-sub" style="margin-bottom:10px;">Список группы (<span id="rosterCount">0</span>)</h2>
+      <ul class="roster-list" id="rosterList"></ul>
+      <div class="settings-row">
+        <input type="text" id="newStudentInput" placeholder="Фамилия И. О.">
+        <button type="button" id="addStudentBtn">Добавить</button>
+      </div>
+      <div class="hint">Список общий для всех, кто откроет эту страницу по ссылке.</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+const DEFAULT_ROSTER = [
+  "Абрамов В. М.","Артемов Е. Р.","Аушев Д. О.","Васильев А. А.","Васильченко И. А.",
+  "Гаврильченко А. А.","Гадаев М. Р.","Гребенькова М. В.","Доронин М. Р.","Зыков Н. А.",
+  "Казарян А. Б.","Кириченко А. В. (С)","Кирюшатов А. П.","Колесов Е. Р.","Конаков В. Д.",
+  "Костюков К. С.","Крюков И. А.","Левченко И. С.","Муталиев М. Р.","Новоселов А. Г.",
+  "Паршин Р. В.","Патрахин И. Д.","Петриченко А. И.","Плохотинченко Д. И.","Рыженко К. С.",
+  "Селезнев И. В.","Тоболькин Н. И.","Харченко Д. А.","Чуванько Ю. М.","Шашлова Д. С.",
+  "Шматко А. Е."
+];
+
+const STORAGE_OK = typeof window.storage !== 'undefined' && !!window.storage;
+const DAY_PREFIX = 'attendance:';
+
+const state = {
+  roster: { nextId: 1, students: [] },
+  groupName: '',
+  currentDate: new Date(),
+  dayData: {},
+  searchTerm: '',
+  statusFilter: 'all'
+};
+
+// ---------- date helpers ----------
+function dateKey(d){
+  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function parseDateKey(s){
+  const parts = s.split('-');
+  return new Date(parseInt(parts[0],10), parseInt(parts[1],10)-1, parseInt(parts[2],10));
+}
+function formatWeekday(d){
+  try { return d.toLocaleDateString('ru-RU', { weekday: 'long' }); } catch(e){ return ''; }
+}
+
+// ---------- storage helpers (all fail-safe) ----------
+async function safeGet(key, shared){
+  try { const res = await window.storage.get(key, shared); return res ? res.value : null; }
+  catch(e){ return null; }
+}
+async function safeSet(key, value, shared){
+  try { const res = await window.storage.set(key, value, shared); return !!res; }
+  catch(e){ return false; }
+}
+async function safeDelete(key, shared){
+  try { await window.storage.delete(key, shared); return true; }
+  catch(e){ return false; }
+}
+async function safeList(prefix, shared){
+  try { const res = await window.storage.list(prefix, shared); return (res && res.keys) ? res.keys : []; }
+  catch(e){ return []; }
+}
+
+// ---------- roster ----------
+async function loadRoster(){
+  const raw = await safeGet('roster', true);
+  if (raw){
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.students)) return parsed;
+    } catch(e){}
+  }
+  const students = DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1), name}));
+  const rosterObj = { nextId: students.length+1, students };
+  await safeSet('roster', JSON.stringify(rosterObj), true);
+  return rosterObj;
+}
+async function persistRoster(){ await safeSet('roster', JSON.stringify(state.roster), true); }
+
+async function loadGroupName(){ return (await safeGet('groupName', true)) || ''; }
+async function persistGroupName(){ await safeSet('groupName', state.groupName, true); }
+
+function nameById(id){
+  const s = state.roster.students.find(s=>s.id===id);
+  return s ? s.name : id;
+}
+
+// ---------- attendance: one key per (day, student) to avoid clobbering others on concurrent check-ins ----------
+function dayKeyPrefix(date){ return `${DAY_PREFIX}${dateKey(date)}:`; }
+
+async function loadDayData(date){
+  const prefix = dayKeyPrefix(date);
+  const keys = await safeList(prefix, true);
+  const data = {};
+  await Promise.all(keys.map(async key=>{
+    const val = await safeGet(key, true);
+    if (val) data[key.slice(prefix.length)] = val;
+  }));
+  return data;
+}
+
+function applyLocal(studentId, newStatus){
+  const old = state.dayData[studentId] || null;
+  if (newStatus) state.dayData[studentId] = newStatus;
+  else delete state.dayData[studentId];
+  return old;
+}
+
+async function persistStatus(studentId, oldStatus, newStatus){
+  const key = dayKeyPrefix(state.currentDate) + studentId;
+  const ok = newStatus ? await safeSet(key, newStatus, true) : await safeDelete(key, true);
+  if (!ok) showToast('Не сохранилось: ' + nameById(studentId));
+
+  const statsKey = 'stats:' + studentId;
+  const raw = await safeGet(statsKey, true);
+  let stats = {P:0,L:0,A:0};
+  if (raw){ try { stats = JSON.parse(raw); } catch(e){} }
+  if (oldStatus && typeof stats[oldStatus]==='number') stats[oldStatus] = Math.max(0, stats[oldStatus]-1);
+  if (newStatus) stats[newStatus] = (stats[newStatus]||0)+1;
+  await safeSet(statsKey, JSON.stringify(stats), true);
+}
+
+async function setStatus(studentId, newStatus){
+  const old = applyLocal(studentId, newStatus);
+  renderStudentList();
+  renderSummary();
+  await persistStatus(studentId, old, newStatus);
+}
+
+async function markAllPresent(){
+  const todo = state.roster.students.filter(s=>!state.dayData[s.id]);
+  if (!todo.length){ showToast('Все уже отмечены'); return; }
+  const changes = todo.map(s=>({id:s.id, old: applyLocal(s.id,'P')}));
+  renderStudentList(); renderSummary();
+  await Promise.all(changes.map(c=>persistStatus(c.id, c.old, 'P')));
+  showToast('Отмечены присутствующими: ' + changes.length);
+}
+
+async function clearDay(){
+  if (!confirm('Очистить все отметки за этот день?')) return;
+  const todo = state.roster.students.filter(s=>state.dayData[s.id]);
+  const changes = todo.map(s=>({id:s.id, old: applyLocal(s.id,null)}));
+  renderStudentList(); renderSummary();
+  await Promise.all(changes.map(c=>persistStatus(c.id, c.old, null)));
+  showToast('День очищен');
+}
+
+// ---------- stats: read the small per-student aggregate, not every historical day ----------
+async function loadStatsTotals(){
+  const totals = {};
+  await Promise.all(state.roster.students.map(async s=>{
+    const raw = await safeGet('stats:'+s.id, true);
+    let v = {P:0,L:0,A:0};
+    if (raw){ try { v = JSON.parse(raw); } catch(e){} }
+    totals[s.id] = v;
+  }));
+  return totals;
+}
+
+// ---------- rendering ----------
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+function statusClass(code){
+  if (code==='P') return 'present';
+  if (code==='L') return 'late';
+  if (code==='A') return 'absent';
+  return '';
+}
+
+function renderStudentList(){
+  const ul = document.getElementById('studentList');
+  const term = state.searchTerm.trim().toLowerCase();
+  const filter = state.statusFilter;
+  const items = state.roster.students.filter(s=>{
+    if (term && s.name.toLowerCase().indexOf(term)===-1) return false;
+    const st = state.dayData[s.id] || '';
+    if (filter==='none' && st!=='') return false;
+    if (filter==='P' && st!=='P') return false;
+    if (filter==='L' && st!=='L') return false;
+    if (filter==='A' && st!=='A') return false;
+    return true;
+  });
+  if (!items.length){
+    ul.innerHTML = '<li class="empty-hint">Никого не найдено</li>';
+    return;
+  }
+  ul.innerHTML = items.map(s=>{
+    const st = state.dayData[s.id] || '';
+    const btn = (code,label) => {
+      const active = st===code ? ' active' : '';
+      return `<button type="button" class="status-btn ${statusClass(code)}${active}" data-status="${code}">${label}</button>`;
+    };
+    return `<li class="student-row" data-id="${s.id}">
+      <div class="student-name">${escapeHtml(s.name)}</div>
+      <div class="status-buttons">${btn('P','Был')}${btn('L','Опоздал')}${btn('A','Не был')}</div>
+    </li>`;
+  }).join('');
+}
+
+function renderSummary(){
+  const total = state.roster.students.length;
+  let p=0,l=0,a=0;
+  state.roster.students.forEach(s=>{
+    const st = state.dayData[s.id];
+    if (st==='P') p++; else if (st==='L') l++; else if (st==='A') a++;
+  });
+  const none = total-p-l-a;
+  document.getElementById('summaryLine').innerHTML = `
+    <div class="summary-cell c-present"><span class="num">${p}</span><span class="lbl">Был</span></div>
+    <div class="summary-cell c-late"><span class="num">${l}</span><span class="lbl">Опоздал</span></div>
+    <div class="summary-cell c-absent"><span class="num">${a}</span><span class="lbl">Не был</span></div>
+    <div class="summary-cell c-none"><span class="num">${none}</span><span class="lbl">Не отмечен</span></div>
+  `;
+}
+
+function renderDateUI(){
+  document.getElementById('datePicker').value = dateKey(state.currentDate);
+  document.getElementById('weekdayLabel').textContent = formatWeekday(state.currentDate);
+}
+
+function renderGroupTitle(){
+  document.getElementById('groupTitleText').textContent = state.groupName || 'Группа';
+  document.getElementById('groupNameInput').value = state.groupName || '';
+}
+
+function renderRosterSettings(){
+  const ul = document.getElementById('rosterList');
+  document.getElementById('rosterCount').textContent = state.roster.students.length;
+  ul.innerHTML = state.roster.students.map(s=>`
+    <li class="roster-row" data-id="${s.id}">
+      <span>${escapeHtml(s.name)}</span>
+      <button type="button" class="removeStudentBtn" data-id="${s.id}" aria-label="Удалить ${escapeHtml(s.name)}">✕</button>
+    </li>`).join('');
+}
+
+async function renderStats(){
+  const loadingEl = document.getElementById('statsLoading');
+  const tableEl = document.getElementById('statsTable');
+  tableEl.hidden = true;
+  loadingEl.hidden = false;
+  loadingEl.textContent = 'Загружаю статистику…';
+  const totals = await loadStatsTotals();
+  const rows = state.roster.students.map(s=>{
+    const t = totals[s.id] || {P:0,L:0,A:0};
+    const sum = t.P+t.L+t.A;
+    const pct = sum>0 ? Math.round((t.P/sum)*100) : null;
+    return { name:s.name, P:t.P, L:t.L, A:t.A, pct, sortKey: t.L+t.A };
+  });
+  if (!rows.length){ loadingEl.textContent = 'Список группы пуст'; return; }
+  rows.sort((a,b)=>b.sortKey-a.sortKey);
+  document.getElementById('statsBody').innerHTML = rows.map(r=>`
+    <tr>
+      <td>${escapeHtml(r.name)}</td>
+      <td class="num">${r.P}</td>
+      <td class="num">${r.L}</td>
+      <td class="num">${r.A}</td>
+      <td class="num">${r.pct===null?'—':r.pct+'%'}</td>
+    </tr>`).join('');
+  loadingEl.hidden = true;
+  tableEl.hidden = false;
+}
+
+// ---------- toast ----------
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+// ---------- tabs ----------
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(btn=>{
+    btn.classList.toggle('active', btn.getAttribute('data-tab')===name);
+  });
+  document.querySelectorAll('.panel').forEach(p=>{
+    p.classList.toggle('active', p.id==='panel-'+name);
+  });
+  if (name==='stats') renderStats();
+  if (name==='settings') renderRosterSettings();
+}
+
+// ---------- date navigation ----------
+async function goToDate(d){
+  state.currentDate = d;
+  renderDateUI();
+  document.getElementById('studentList').innerHTML = '<li class="empty-hint">Загрузка…</li>';
+  state.dayData = await loadDayData(d);
+  renderStudentList();
+  renderSummary();
+}
+
+// ---------- events ----------
+function setupEvents(){
+  document.getElementById('prevDay').addEventListener('click', ()=>{
+    const d = new Date(state.currentDate); d.setDate(d.getDate()-1); goToDate(d);
+  });
+  document.getElementById('nextDay').addEventListener('click', ()=>{
+    const d = new Date(state.currentDate); d.setDate(d.getDate()+1); goToDate(d);
+  });
+  document.getElementById('datePicker').addEventListener('change', e=>{
+    if (!e.target.value) return;
+    goToDate(parseDateKey(e.target.value));
+  });
+  document.getElementById('refreshBtn').addEventListener('click', ()=>goToDate(state.currentDate));
+
+  document.getElementById('searchInput').addEventListener('input', e=>{
+    state.searchTerm = e.target.value; renderStudentList();
+  });
+  document.getElementById('statusFilter').addEventListener('change', e=>{
+    state.statusFilter = e.target.value; renderStudentList();
+  });
+
+  document.getElementById('markAllPresentBtn').addEventListener('click', markAllPresent);
+  document.getElementById('clearDayBtn').addEventListener('click', clearDay);
+
+  document.getElementById('studentList').addEventListener('click', e=>{
+    const btn = e.target.closest('.status-btn');
+    if (!btn) return;
+    const row = e.target.closest('.student-row');
+    const id = row.getAttribute('data-id');
+    const status = btn.getAttribute('data-status');
+    const current = state.dayData[id] || null;
+    setStatus(id, current===status ? null : status);
+  });
+
+  document.querySelectorAll('.tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>switchTab(btn.getAttribute('data-tab')));
+  });
+
+  document.getElementById('saveGroupNameBtn').addEventListener('click', async ()=>{
+    const v = document.getElementById('groupNameInput').value.trim();
+    state.groupName = v;
+    renderGroupTitle();
+    await persistGroupName();
+    showToast('Название сохранено');
+  });
+
+  document.getElementById('addStudentBtn').addEventListener('click', async ()=>{
+    const input = document.getElementById('newStudentInput');
+    const name = input.value.trim();
+    if (!name) return;
+    const id = 's'+state.roster.nextId;
+    state.roster.nextId += 1;
+    state.roster.students.push({id, name});
+    input.value = '';
+    renderRosterSettings();
+    await persistRoster();
+    showToast('Добавлено: '+name);
+  });
+
+  document.getElementById('rosterList').addEventListener('click', async e=>{
+    const btn = e.target.closest('.removeStudentBtn');
+    if (!btn) return;
+    const id = btn.getAttribute('data-id');
+    const name = nameById(id);
+    if (!confirm(`Удалить ${name} из списка группы?`)) return;
+    state.roster.students = state.roster.students.filter(s=>s.id!==id);
+    renderRosterSettings();
+    await persistRoster();
+    showToast('Удалено: '+name);
+  });
+}
+
+// ---------- init ----------
+async function init(){
+  if (!STORAGE_OK){
+    document.getElementById('loadingOverlay').innerHTML =
+      '<div style="max-width:280px;text-align:center;">Хранилище недоступно в этом окне. Откройте артефакт в приложении или на сайте Claude, чтобы отметки сохранялись.</div>';
+    return;
+  }
+  state.roster = await loadRoster();
+  state.groupName = await loadGroupName();
+  renderGroupTitle();
+  renderDateUI();
+  state.dayData = await loadDayData(state.currentDate);
+  renderStudentList();
+  renderSummary();
+
+  document.getElementById('loadingOverlay').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  setupEvents();
+}
+
+init();
+})();
+</script>
+</body>
+</html>
