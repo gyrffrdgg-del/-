@@ -216,7 +216,7 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
         <input type="text" id="newStudentInput" placeholder="Фамилия И. О.">
         <button type="button" id="addStudentBtn">Добавить</button>
       </div>
-      <div class="hint">Список общий для всех, кто откроет эту страницу по ссылке.</div>
+      <div class="hint">Список сохраняется в вашем браузере (только для этого устройства).</div>
     </div>
   </section>
 
@@ -238,14 +238,32 @@ const DEFAULT_ROSTER = [
   "Шматко А. Е."
 ];
 
-const STORAGE_OK = typeof window.storage !== 'undefined' && !!window.storage;
-const DAY_PREFIX = 'attendance:';
+// ---- localStorage helpers ----
+function storageGet(key) {
+  const val = localStorage.getItem(key);
+  if (val === null) return null;
+  try { return JSON.parse(val); } catch(e) { return val; }
+}
+function storageSet(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+function storageRemove(key) {
+  localStorage.removeItem(key);
+}
+function storageKeys(prefix) {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith(prefix)) keys.push(k);
+  }
+  return keys;
+}
 
 const state = {
   roster: { nextId: 1, students: [] },
   groupName: '',
   currentDate: new Date(),
-  dayData: {},
+  dayData: {}, // studentId -> 'P','L','A'
   searchTerm: '',
   statusFilter: 'all'
 };
@@ -263,59 +281,47 @@ function formatWeekday(d){
   try { return d.toLocaleDateString('ru-RU', { weekday: 'long' }); } catch(e){ return ''; }
 }
 
-// ---------- storage helpers (all fail-safe) ----------
-async function safeGet(key, shared){
-  try { const res = await window.storage.get(key, shared); return res ? res.value : null; }
-  catch(e){ return null; }
-}
-async function safeSet(key, value, shared){
-  try { const res = await window.storage.set(key, value, shared); return !!res; }
-  catch(e){ return false; }
-}
-async function safeDelete(key, shared){
-  try { await window.storage.delete(key, shared); return true; }
-  catch(e){ return false; }
-}
-async function safeList(prefix, shared){
-  try { const res = await window.storage.list(prefix, shared); return (res && res.keys) ? res.keys : []; }
-  catch(e){ return []; }
-}
-
 // ---------- roster ----------
-async function loadRoster(){
-  const raw = await safeGet('roster', true);
-  if (raw){
-    try {
-      const parsed = JSON.parse(raw);
-      if (parsed && Array.isArray(parsed.students)) return parsed;
-    } catch(e){}
+function loadRoster(){
+  const raw = storageGet('roster');
+  if (raw && Array.isArray(raw.students)) {
+    return raw;
   }
   const students = DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1), name}));
-  const rosterObj = { nextId: students.length+1, students };
-  await safeSet('roster', JSON.stringify(rosterObj), true);
-  return rosterObj;
+  const roster = { nextId: students.length+1, students };
+  storageSet('roster', roster);
+  return roster;
 }
-async function persistRoster(){ await safeSet('roster', JSON.stringify(state.roster), true); }
+function persistRoster(){
+  storageSet('roster', state.roster);
+}
 
-async function loadGroupName(){ return (await safeGet('groupName', true)) || ''; }
-async function persistGroupName(){ await safeSet('groupName', state.groupName, true); }
+function loadGroupName(){
+  return storageGet('groupName') || '';
+}
+function persistGroupName(){
+  storageSet('groupName', state.groupName);
+}
 
 function nameById(id){
   const s = state.roster.students.find(s=>s.id===id);
   return s ? s.name : id;
 }
 
-// ---------- attendance: one key per (day, student) to avoid clobbering others on concurrent check-ins ----------
-function dayKeyPrefix(date){ return `${DAY_PREFIX}${dateKey(date)}:`; }
+// ---------- attendance ----------
+function dayKeyPrefix(date){
+  return `att:${dateKey(date)}:`;
+}
 
-async function loadDayData(date){
+function loadDayData(date){
   const prefix = dayKeyPrefix(date);
-  const keys = await safeList(prefix, true);
+  const keys = storageKeys(prefix);
   const data = {};
-  await Promise.all(keys.map(async key=>{
-    const val = await safeGet(key, true);
-    if (val) data[key.slice(prefix.length)] = val;
-  }));
+  keys.forEach(key => {
+    const studentId = key.slice(prefix.length);
+    const val = storageGet(key);
+    if (val) data[studentId] = val;
+  });
   return data;
 }
 
@@ -326,54 +332,51 @@ function applyLocal(studentId, newStatus){
   return old;
 }
 
-async function persistStatus(studentId, oldStatus, newStatus){
+function persistStatus(studentId, oldStatus, newStatus){
   const key = dayKeyPrefix(state.currentDate) + studentId;
-  const ok = newStatus ? await safeSet(key, newStatus, true) : await safeDelete(key, true);
-  if (!ok) showToast('Не сохранилось: ' + nameById(studentId));
+  if (newStatus) storageSet(key, newStatus);
+  else storageRemove(key);
 
+  // update global stats (per student totals)
   const statsKey = 'stats:' + studentId;
-  const raw = await safeGet(statsKey, true);
-  let stats = {P:0,L:0,A:0};
-  if (raw){ try { stats = JSON.parse(raw); } catch(e){} }
+  let stats = storageGet(statsKey) || {P:0, L:0, A:0};
   if (oldStatus && typeof stats[oldStatus]==='number') stats[oldStatus] = Math.max(0, stats[oldStatus]-1);
   if (newStatus) stats[newStatus] = (stats[newStatus]||0)+1;
-  await safeSet(statsKey, JSON.stringify(stats), true);
+  storageSet(statsKey, stats);
 }
 
-async function setStatus(studentId, newStatus){
+function setStatus(studentId, newStatus){
   const old = applyLocal(studentId, newStatus);
   renderStudentList();
   renderSummary();
-  await persistStatus(studentId, old, newStatus);
+  persistStatus(studentId, old, newStatus);
 }
 
-async function markAllPresent(){
+function markAllPresent(){
   const todo = state.roster.students.filter(s=>!state.dayData[s.id]);
   if (!todo.length){ showToast('Все уже отмечены'); return; }
   const changes = todo.map(s=>({id:s.id, old: applyLocal(s.id,'P')}));
   renderStudentList(); renderSummary();
-  await Promise.all(changes.map(c=>persistStatus(c.id, c.old, 'P')));
+  changes.forEach(c => persistStatus(c.id, c.old, 'P'));
   showToast('Отмечены присутствующими: ' + changes.length);
 }
 
-async function clearDay(){
+function clearDay(){
   if (!confirm('Очистить все отметки за этот день?')) return;
   const todo = state.roster.students.filter(s=>state.dayData[s.id]);
   const changes = todo.map(s=>({id:s.id, old: applyLocal(s.id,null)}));
   renderStudentList(); renderSummary();
-  await Promise.all(changes.map(c=>persistStatus(c.id, c.old, null)));
+  changes.forEach(c => persistStatus(c.id, c.old, null));
   showToast('День очищен');
 }
 
-// ---------- stats: read the small per-student aggregate, not every historical day ----------
-async function loadStatsTotals(){
+// ---------- stats ----------
+function loadStatsTotals(){
   const totals = {};
-  await Promise.all(state.roster.students.map(async s=>{
-    const raw = await safeGet('stats:'+s.id, true);
-    let v = {P:0,L:0,A:0};
-    if (raw){ try { v = JSON.parse(raw); } catch(e){} }
-    totals[s.id] = v;
-  }));
+  state.roster.students.forEach(s => {
+    const stats = storageGet('stats:'+s.id) || {P:0, L:0, A:0};
+    totals[s.id] = stats;
+  });
   return totals;
 }
 
@@ -454,13 +457,13 @@ function renderRosterSettings(){
     </li>`).join('');
 }
 
-async function renderStats(){
+function renderStats(){
   const loadingEl = document.getElementById('statsLoading');
   const tableEl = document.getElementById('statsTable');
   tableEl.hidden = true;
   loadingEl.hidden = false;
   loadingEl.textContent = 'Загружаю статистику…';
-  const totals = await loadStatsTotals();
+  const totals = loadStatsTotals();
   const rows = state.roster.students.map(s=>{
     const t = totals[s.id] || {P:0,L:0,A:0};
     const sum = t.P+t.L+t.A;
@@ -504,11 +507,11 @@ function switchTab(name){
 }
 
 // ---------- date navigation ----------
-async function goToDate(d){
+function goToDate(d){
   state.currentDate = d;
   renderDateUI();
   document.getElementById('studentList').innerHTML = '<li class="empty-hint">Загрузка…</li>';
-  state.dayData = await loadDayData(d);
+  state.dayData = loadDayData(d);
   renderStudentList();
   renderSummary();
 }
@@ -551,15 +554,15 @@ function setupEvents(){
     btn.addEventListener('click', ()=>switchTab(btn.getAttribute('data-tab')));
   });
 
-  document.getElementById('saveGroupNameBtn').addEventListener('click', async ()=>{
+  document.getElementById('saveGroupNameBtn').addEventListener('click', ()=>{
     const v = document.getElementById('groupNameInput').value.trim();
     state.groupName = v;
     renderGroupTitle();
-    await persistGroupName();
+    persistGroupName();
     showToast('Название сохранено');
   });
 
-  document.getElementById('addStudentBtn').addEventListener('click', async ()=>{
+  document.getElementById('addStudentBtn').addEventListener('click', ()=>{
     const input = document.getElementById('newStudentInput');
     const name = input.value.trim();
     if (!name) return;
@@ -568,11 +571,11 @@ function setupEvents(){
     state.roster.students.push({id, name});
     input.value = '';
     renderRosterSettings();
-    await persistRoster();
+    persistRoster();
     showToast('Добавлено: '+name);
   });
 
-  document.getElementById('rosterList').addEventListener('click', async e=>{
+  document.getElementById('rosterList').addEventListener('click', e=>{
     const btn = e.target.closest('.removeStudentBtn');
     if (!btn) return;
     const id = btn.getAttribute('data-id');
@@ -580,23 +583,18 @@ function setupEvents(){
     if (!confirm(`Удалить ${name} из списка группы?`)) return;
     state.roster.students = state.roster.students.filter(s=>s.id!==id);
     renderRosterSettings();
-    await persistRoster();
+    persistRoster();
     showToast('Удалено: '+name);
   });
 }
 
 // ---------- init ----------
-async function init(){
-  if (!STORAGE_OK){
-    document.getElementById('loadingOverlay').innerHTML =
-      '<div style="max-width:280px;text-align:center;">Хранилище недоступно в этом окне. Откройте артефакт в приложении или на сайте Claude, чтобы отметки сохранялись.</div>';
-    return;
-  }
-  state.roster = await loadRoster();
-  state.groupName = await loadGroupName();
+function init(){
+  state.roster = loadRoster();
+  state.groupName = loadGroupName();
   renderGroupTitle();
   renderDateUI();
-  state.dayData = await loadDayData(state.currentDate);
+  state.dayData = loadDayData(state.currentDate);
   renderStudentList();
   renderSummary();
 
