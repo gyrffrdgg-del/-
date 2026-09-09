@@ -6,8 +6,6 @@
 <meta name="color-scheme" content="light">
 <title>Посещаемость группы</title>
 <style>
-/* Стили такие же, как в прошлой версии – я их здесь сократил для экономии места, но они все есть в полном коде. 
-   Для краткости я даю полный код с комментариями. */
 :root{
   --bg:#f3f4f9;
   --card:#ffffff;
@@ -214,9 +212,9 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
 'use strict';
 
 // ================================================================
-// 1. ВСТАВЬ СВОЙ URL ВЕБ-ПРИЛОЖЕНИЯ (из шага 1)
+// ТВОЙ URL ВЕБ-ПРИЛОЖЕНИЯ (уже вставлен!)
 // ================================================================
-const SCRIPT_URL = 'https://script.google.com/macros/s/ТВОЙ_УНИКАЛЬНЫЙ_АДРЕС/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8G1Rjrr-69HyHHdQ7IrCKLZ7-TC5F2II4_OOdSgUu8GzVULNuZhv5aasSrHf9IKVo/exec';
 
 // Базовый список группы (используется только при первом запуске, если таблица пуста)
 const DEFAULT_ROSTER = [
@@ -256,7 +254,7 @@ function formatWeekday(d){
 }
 
 // ================================================================
-// Общение с Google Apps Script (с логами)
+// Общение с Google Apps Script
 // ================================================================
 async function apiCall(action, payload = {}) {
   const method = (action === 'setRoster' || action === 'setAttendance' || action === 'setGroupName') ? 'POST' : 'GET';
