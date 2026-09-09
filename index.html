@@ -3,95 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Посещаемость группы (Gist)</title>
+<title>Посещаемость группы</title>
 <style>
-:root{
-  --bg:#f3f4f9;
-  --card:#fff;
-  --ink:#1c2033;
-  --muted:#5d6277;
-  --line:#e3e5ef;
-  --accent:#33408f;
-  --present:#187a48;
-  --late:#8f5606;
-  --absent:#b02f2f;
-  --radius:14px;
-}
-*{box-sizing:border-box;}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:sans-serif;font-size:16px;line-height:1.45;}
-.app{max-width:640px;margin:0 auto;padding:16px 14px 56px;}
-header{padding:6px 2px 14px;}
-h1{font-size:22px;margin:0;color:var(--accent);}
-.sub{font-size:13px;color:var(--muted);margin:2px 0 14px;font-weight:600;}
-.daterow{display:flex;align-items:center;gap:8px;}
-.daterow button{width:44px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--card);font-size:19px;cursor:pointer;}
-.datebox{flex:1;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:5px 10px;text-align:center;}
-.datebox input{width:100%;border:none;font-size:15px;font-weight:700;background:transparent;text-align:center;font-family:inherit;}
-.weekday{font-size:12px;color:var(--muted);}
-.tabs{display:flex;gap:6px;margin:16px 0 12px;background:var(--card);padding:4px;border-radius:12px;border:1px solid var(--line);}
-.tab{flex:1;border:none;background:transparent;padding:10px 4px;border-radius:9px;font-size:14px;color:var(--muted);font-weight:600;cursor:pointer;}
-.tab.active{background:var(--accent);color:#fff;}
-.panel{display:none;}
-.panel.active{display:block;}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
-.filters{display:flex;gap:8px;margin-bottom:12px;}
-.filters input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;}
-.filters select{padding:11px 8px;border-radius:10px;border:1px solid var(--line);font-size:13px;}
-.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px;}
-.summary-cell{background:var(--bg);border-radius:10px;padding:8px 4px;text-align:center;border-top:3px solid var(--line);}
-.summary-cell .num{font-size:18px;font-weight:700;display:block;}
-.summary-cell .lbl{font-size:10.5px;color:var(--muted);}
-.c-present{border-top-color:var(--present);}
-.c-late{border-top-color:var(--late);}
-.c-absent{border-top-color:var(--absent);}
-.c-none{border-top-color:var(--muted);}
-.refresh-row{display:flex;justify-content:flex-end;margin:10px 0 2px;}
-.refresh-row button{border:none;background:none;color:var(--accent);font-weight:600;padding:4px 2px;cursor:pointer;}
-details.bulk{margin-top:8px;}
-details.bulk summary{font-size:13px;color:var(--accent);font-weight:600;cursor:pointer;list-style:none;}
-details.bulk summary::before{content:"▸ ";}
-details.bulk[open] summary::before{content:"▾ ";}
-details.bulk .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:6px;}
-details.bulk button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;}
-ul.student-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
-.student-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
-.student-name{font-size:15px;font-weight:600;margin-bottom:8px;}
-.status-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
-.status-btn{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:11px 4px;font-size:13px;font-weight:700;color:var(--muted);min-height:44px;cursor:pointer;}
-.status-btn.active.present{background:#e1f4ea;border-color:var(--present);color:var(--present);}
-.status-btn.active.late{background:#faf0dd;border-color:var(--late);color:var(--late);}
-.status-btn.active.absent{background:#fbe7e7;border-color:var(--absent);color:var(--absent);}
-.empty-hint{text-align:center;color:var(--muted);padding:28px 8px;}
-table.stats-table{width:100%;border-collapse:collapse;font-size:13.5px;}
-table.stats-table th,table.stats-table td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line);}
-table.stats-table th{color:var(--muted);font-weight:600;font-size:11.5px;}
-table.stats-table td.num,table.stats-table th.num{text-align:center;}
-.settings-row{display:flex;gap:8px;}
-.settings-row input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;}
-.settings-row button{border:none;background:var(--accent);color:#fff;border-radius:10px;padding:0 16px;font-size:14px;font-weight:600;cursor:pointer;}
-ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
-.roster-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;}
-.roster-row button{border:none;background:none;color:#b02f2f;font-size:16px;padding:2px 6px;font-weight:700;cursor:pointer;}
-.hint{font-size:12.5px;color:var(--muted);margin-top:6px;}
-.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:30;}
-.toast.show{opacity:1;transform:translate(-50%,0);}
-.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);z-index:20;padding:20px;}
-.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
+:root{--bg:#f3f4f9;--card:#fff;--ink:#1c2033;--muted:#5d6277;--line:#e3e5ef;--accent:#33408f;--present:#187a48;--late:#8f5606;--absent:#b02f2f;--radius:14px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:sans-serif;font-size:16px;line-height:1.45}
+.app{max-width:640px;margin:0 auto;padding:16px 14px 56px}
+header{padding:6px 2px 14px}
+h1{font-size:22px;margin:0;color:var(--accent)}
+.sub{font-size:13px;color:var(--muted);margin:2px 0 14px;font-weight:600}
+.daterow{display:flex;align-items:center;gap:8px}
+.daterow button{width:44px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--card);font-size:19px;cursor:pointer}
+.datebox{flex:1;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:5px 10px;text-align:center}
+.datebox input{width:100%;border:none;font-size:15px;font-weight:700;background:transparent;text-align:center;font-family:inherit}
+.weekday{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:6px;margin:16px 0 12px;background:var(--card);padding:4px;border-radius:12px;border:1px solid var(--line)}
+.tab{flex:1;border:none;background:transparent;padding:10px 4px;border-radius:9px;font-size:14px;color:var(--muted);font-weight:600;cursor:pointer}
+.tab.active{background:var(--accent);color:#fff}
+.panel{display:none}
+.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.filters{display:flex;gap:8px;margin-bottom:12px}
+.filters input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px}
+.filters select{padding:11px 8px;border-radius:10px;border:1px solid var(--line);font-size:13px}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px}
+.summary-cell{background:var(--bg);border-radius:10px;padding:8px 4px;text-align:center;border-top:3px solid var(--line)}
+.summary-cell .num{font-size:18px;font-weight:700;display:block}
+.summary-cell .lbl{font-size:10.5px;color:var(--muted)}
+.c-present{border-top-color:var(--present)}
+.c-late{border-top-color:var(--late)}
+.c-absent{border-top-color:var(--absent)}
+.c-none{border-top-color:var(--muted)}
+.refresh-row{display:flex;justify-content:flex-end;margin:10px 0 2px}
+.refresh-row button{border:none;background:none;color:var(--accent);font-weight:600;padding:4px 2px;cursor:pointer}
+details.bulk{margin-top:8px}
+details.bulk summary{font-size:13px;color:var(--accent);font-weight:600;cursor:pointer;list-style:none}
+details.bulk summary::before{content:"▸ "}
+details.bulk[open] summary::before{content:"▾ "}
+details.bulk .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:6px}
+details.bulk button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer}
+ul.student-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.student-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.student-name{font-size:15px;font-weight:600;margin-bottom:8px}
+.status-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.status-btn{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:11px 4px;font-size:13px;font-weight:700;color:var(--muted);min-height:44px;cursor:pointer}
+.status-btn.active.present{background:#e1f4ea;border-color:var(--present);color:var(--present)}
+.status-btn.active.late{background:#faf0dd;border-color:var(--late);color:var(--late)}
+.status-btn.active.absent{background:#fbe7e7;border-color:var(--absent);color:var(--absent)}
+.empty-hint{text-align:center;color:var(--muted);padding:28px 8px}
+table.stats-table{width:100%;border-collapse:collapse;font-size:13.5px}
+table.stats-table th,table.stats-table td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line)}
+table.stats-table th{color:var(--muted);font-weight:600;font-size:11.5px}
+table.stats-table td.num,table.stats-table th.num{text-align:center}
+.settings-row{display:flex;gap:8px}
+.settings-row input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px}
+.settings-row button{border:none;background:var(--accent);color:#fff;border-radius:10px;padding:0 16px;font-size:14px;font-weight:600;cursor:pointer}
+ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.roster-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px}
+.roster-row button{border:none;background:none;color:#b02f2f;font-size:16px;padding:2px 6px;font-weight:700;cursor:pointer}
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:30}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);z-index:20;padding:20px}
+.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-
-<div id="loadingOverlay" class="loading-overlay">
-  <div class="spinner"></div>
-  <div>Загрузка данных…</div>
-</div>
+<div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div><div>Загрузка данных…</div></div>
 
 <div class="app" id="app" style="display:none;">
-
   <header>
     <h1 id="groupTitleText">Группа</h1>
-    <div class="sub">Учёт посещаемости (синхронизация через Gist)</div>
+    <div class="sub">Учёт посещаемости (синхронизация)</div>
     <div class="daterow">
       <button id="prevDay">‹</button>
       <div class="datebox">
@@ -158,10 +141,9 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
         <input type="text" id="newStudentInput" placeholder="Фамилия И. О.">
         <button id="addStudentBtn">Добавить</button>
       </div>
-      <div class="hint">Данные синхронизируются через GitHub Gist. Все пользователи видят одни и те же изменения.</div>
+      <div class="hint">Данные синхронизируются через jsonbin.io. Все пользователи видят одни и те же изменения.</div>
     </div>
   </section>
-
 </div>
 
 <div class="toast" id="toast"></div>
@@ -171,10 +153,9 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
 'use strict';
 
 // ================================================================
-// ⚠️ ВСТАВЬ СВОЙ ТОКЕН (с доступом к gist)
+// ВСТАВЬ СВОЙ API-КЛЮЧ (X-Master-Key)
 // ================================================================
-const GIST_ID = 'e9a358b29582ddca53131e0838a25077';
-const GITHUB_TOKEN = 'ТВОЙ_ТОКЕН';   // замени на реальный токен, начинается с ghp_
+const API_KEY = '$2a$10$8iKbqkcEhIfiTNkG7.2mNuQGBoktv3ft7ZzuXI5rUEiRpLUrmyWum';
 
 // Базовый список группы (если данных нет)
 const DEFAULT_ROSTER = [
@@ -187,54 +168,109 @@ const DEFAULT_ROSTER = [
 ];
 
 // ================================================================
-// Работа с Gist API
-// ================================================================
-async function loadFromGist() {
-  const url = `https://api.github.com/gists/${GIST_ID}`;
-  const response = await fetch(url);
-  if (!response.ok) throw new Error('Не удалось загрузить Gist');
-  const data = await response.json();
-  const content = data.files['data.json']?.content;
-  if (!content) throw new Error('Файл data.json не найден в Gist');
-  return JSON.parse(content);
-}
-
-async function saveToGist(data) {
-  const url = `https://api.github.com/gists/${GIST_ID}`;
-  const payload = {
-    files: {
-      'data.json': {
-        content: JSON.stringify(data, null, 2)
-      }
-    }
-  };
-  const response = await fetch(url, {
-    method: 'PATCH',
-    headers: {
-      'Authorization': `token ${GITHUB_TOKEN}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/vnd.github.v3+json'
-    },
-    body: JSON.stringify(payload)
-  });
-  if (!response.ok) throw new Error('Не удалось сохранить данные в Gist');
-  return response.json();
-}
-
-// ================================================================
 // Состояние
 // ================================================================
 const state = {
   roster: { nextId: 1, students: [] },
   groupName: '',
   currentDate: new Date(),
+  dayData: {},
   searchTerm: '',
   statusFilter: 'all'
 };
 
-// Кеш отметок и статистики (глобальные)
-let attendanceCache = {};
-let statsCache = {};
+// Храним ID бина в localStorage после создания
+let binId = localStorage.getItem('jsonbin_binId') || null;
+
+// ================================================================
+// Работа с jsonbin.io (автосоздание бина)
+// ================================================================
+async function ensureBin() {
+  if (binId) {
+    try {
+      // Проверяем, существует ли бин
+      const test = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+        headers: { 'X-Master-Key': API_KEY }
+      });
+      if (test.ok) return binId;
+    } catch(e) {}
+    // Если бин не найден, удаляем сохранённый ID и создаём новый
+    localStorage.removeItem('jsonbin_binId');
+    binId = null;
+  }
+
+  // Создаём новый бин
+  const response = await fetch('https://api.jsonbin.io/v3/b', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': API_KEY
+    },
+    body: JSON.stringify({})
+  });
+  if (!response.ok) throw new Error('Не удалось создать бин');
+  const data = await response.json();
+  binId = data.metadata.id;
+  localStorage.setItem('jsonbin_binId', binId);
+  return binId;
+}
+
+async function loadFromBin() {
+  if (!binId) await ensureBin();
+  const url = `https://api.jsonbin.io/v3/b/${binId}/latest`;
+  const response = await fetch(url, {
+    headers: { 'X-Master-Key': API_KEY }
+  });
+  if (!response.ok) throw new Error('Не удалось загрузить данные');
+  const data = await response.json();
+  return data.record;
+}
+
+async function saveToBin(data) {
+  if (!binId) await ensureBin();
+  const url = `https://api.jsonbin.io/v3/b/${binId}`;
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': API_KEY
+    },
+    body: JSON.stringify(data)
+  });
+  if (!response.ok) throw new Error('Не удалось сохранить данные');
+  return response.json();
+}
+
+// ================================================================
+// Загрузка/сохранение всех данных
+// ================================================================
+async function loadAllData() {
+  try {
+    await ensureBin(); // убеждаемся, что бин существует
+    const remote = await loadFromBin();
+    state.roster = remote.roster || { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
+    state.groupName = remote.groupName || 'Группа';
+    state.dayData = remote.dayData || {};
+    renderGroupTitle();
+    renderRosterSettings();
+  } catch (e) {
+    console.error('Ошибка загрузки:', e);
+    state.roster = { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
+    state.groupName = 'Группа';
+    state.dayData = {};
+    renderGroupTitle();
+    renderRosterSettings();
+  }
+}
+
+async function saveAllData() {
+  const data = {
+    roster: state.roster,
+    groupName: state.groupName,
+    dayData: state.dayData
+  };
+  await saveToBin(data);
+}
 
 // ================================================================
 // Вспомогательные функции
@@ -261,59 +297,13 @@ function statusClass(code){
 }
 
 // ================================================================
-// Загрузка/сохранение всех данных
-// ================================================================
-async function loadAllData() {
-  try {
-    const remote = await loadFromGist();
-    state.roster = remote.roster || { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
-    state.groupName = remote.groupName || 'Группа';
-    attendanceCache = remote.attendance || {};
-    statsCache = remote.stats || {};
-    renderGroupTitle();
-    renderRosterSettings();
-  } catch (e) {
-    console.error('Ошибка загрузки данных из Gist:', e);
-    state.roster = { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
-    state.groupName = 'Группа';
-    attendanceCache = {};
-    statsCache = {};
-    renderGroupTitle();
-    renderRosterSettings();
-  }
-}
-
-async function saveAllData() {
-  const data = {
-    roster: state.roster,
-    groupName: state.groupName,
-    attendance: attendanceCache,
-    stats: statsCache
-  };
-  await saveToGist(data);
-}
-
-// ================================================================
-// Работа с отметками
-// ================================================================
-function getDayData(date) {
-  const key = dateKey(date);
-  return attendanceCache[key] || {};
-}
-
-function setDayData(date, dayData) {
-  const key = dateKey(date);
-  attendanceCache[key] = dayData;
-}
-
-// ================================================================
 // RENDER FUNCTIONS
 // ================================================================
 function renderStudentList() {
   const ul = document.getElementById('studentList');
   const term = state.searchTerm.trim().toLowerCase();
   const filter = state.statusFilter;
-  const dayData = getDayData(state.currentDate);
+  const dayData = state.dayData[dateKey(state.currentDate)] || {};
   const items = state.roster.students.filter(s => {
     if (term && s.name.toLowerCase().indexOf(term) === -1) return false;
     const st = dayData[s.id] || '';
@@ -342,7 +332,7 @@ function renderStudentList() {
 
 function renderSummary() {
   const total = state.roster.students.length;
-  const dayData = getDayData(state.currentDate);
+  const dayData = state.dayData[dateKey(state.currentDate)] || {};
   let p=0,l=0,a=0;
   state.roster.students.forEach(s => {
     const st = dayData[s.id];
@@ -383,13 +373,21 @@ function renderStats() {
   tableEl.hidden = true;
   loadingEl.hidden = false;
   loadingEl.textContent = 'Загружаю статистику…';
+  const stats = {};
+  Object.keys(state.dayData).forEach(date => {
+    const day = state.dayData[date];
+    Object.keys(day).forEach(studentId => {
+      if (!stats[studentId]) stats[studentId] = {P:0,L:0,A:0};
+      stats[studentId][day[studentId]] = (stats[studentId][day[studentId]] || 0) + 1;
+    });
+  });
   const rows = state.roster.students.map(s => {
-    const t = statsCache[s.id] || {P:0,L:0,A:0};
+    const t = stats[s.id] || {P:0,L:0,A:0};
     const sum = t.P + t.L + t.A;
     const pct = sum > 0 ? Math.round((t.P/sum)*100) : null;
     return { name: s.name, P: t.P, L: t.L, A: t.A, pct, sortKey: t.L + t.A };
   });
-  if (!rows.length) { loadingEl.textContent = 'Список группы пуст'; return; }
+  if (!rows.length) { loadingEl.textContent = 'Нет данных'; return; }
   rows.sort((a,b) => b.sortKey - a.sortKey);
   document.getElementById('statsBody').innerHTML = rows.map(r => `
     <tr>
@@ -407,16 +405,11 @@ function renderStats() {
 // Действия
 // ================================================================
 async function setStatus(studentId, newStatus) {
-  const dayData = getDayData(state.currentDate);
-  const oldStatus = dayData[studentId] || null;
+  const key = dateKey(state.currentDate);
+  if (!state.dayData[key]) state.dayData[key] = {};
+  const dayData = state.dayData[key];
   if (newStatus) dayData[studentId] = newStatus;
   else delete dayData[studentId];
-  setDayData(state.currentDate, dayData);
-  // обновляем статистику
-  if (!statsCache[studentId]) statsCache[studentId] = {P:0,L:0,A:0};
-  if (oldStatus && statsCache[studentId][oldStatus] > 0) statsCache[studentId][oldStatus]--;
-  if (newStatus) statsCache[studentId][newStatus] = (statsCache[studentId][newStatus] || 0) + 1;
-  // Сохраняем в Gist
   await saveAllData();
   renderStudentList();
   renderSummary();
@@ -488,15 +481,12 @@ function setupEvents() {
   });
 
   document.getElementById('markAllPresentBtn').addEventListener('click', async () => {
-    const dayData = getDayData(state.currentDate);
+    const key = dateKey(state.currentDate);
+    if (!state.dayData[key]) state.dayData[key] = {};
+    const dayData = state.dayData[key];
     const todo = state.roster.students.filter(s => !dayData[s.id]);
     if (!todo.length) { showToast('Все уже отмечены'); return; }
-    for (let s of todo) {
-      dayData[s.id] = 'P';
-      if (!statsCache[s.id]) statsCache[s.id] = {P:0,L:0,A:0};
-      statsCache[s.id].P = (statsCache[s.id].P || 0) + 1;
-    }
-    setDayData(state.currentDate, dayData);
+    todo.forEach(s => dayData[s.id] = 'P');
     await saveAllData();
     renderStudentList();
     renderSummary();
@@ -505,19 +495,16 @@ function setupEvents() {
 
   document.getElementById('clearDayBtn').addEventListener('click', async () => {
     if (!confirm('Очистить все отметки за этот день?')) return;
-    const dayData = getDayData(state.currentDate);
-    const todo = state.roster.students.filter(s => dayData[s.id]);
-    if (!todo.length) { showToast('Нет отметок для очистки'); return; }
-    for (let s of todo) {
-      const oldStatus = dayData[s.id];
-      delete dayData[s.id];
-      if (statsCache[s.id] && statsCache[s.id][oldStatus] > 0) statsCache[s.id][oldStatus]--;
+    const key = dateKey(state.currentDate);
+    if (state.dayData[key]) {
+      delete state.dayData[key];
+      await saveAllData();
+      renderStudentList();
+      renderSummary();
+      showToast('День очищен');
+    } else {
+      showToast('Нет отметок для очистки');
     }
-    setDayData(state.currentDate, dayData);
-    await saveAllData();
-    renderStudentList();
-    renderSummary();
-    showToast('День очищен');
   });
 
   document.getElementById('studentList').addEventListener('click', async e => {
@@ -526,7 +513,8 @@ function setupEvents() {
     const row = e.target.closest('.student-row');
     const id = row.getAttribute('data-id');
     const status = btn.getAttribute('data-status');
-    const dayData = getDayData(state.currentDate);
+    const key = dateKey(state.currentDate);
+    const dayData = state.dayData[key] || {};
     const current = dayData[id] || null;
     const newStatus = (current === status) ? null : status;
     await setStatus(id, newStatus);
@@ -590,7 +578,7 @@ async function init() {
     document.getElementById('app').style.display = 'block';
     setupEvents();
   } catch (e) {
-    document.getElementById('loadingOverlay').innerHTML = '<div>Ошибка загрузки. Проверьте токен и ID гиста.</div>';
+    document.getElementById('loadingOverlay').innerHTML = '<div>Ошибка загрузки. Проверьте API-ключ.</div>';
     console.error(e);
   }
 }
