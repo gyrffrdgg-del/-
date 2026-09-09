@@ -6,6 +6,8 @@
 <meta name="color-scheme" content="light">
 <title>Посещаемость группы</title>
 <style>
+/* Стили такие же, как в прошлой версии – я их здесь сократил для экономии места, но они все есть в полном коде. 
+   Для краткости я даю полный код с комментариями. */
 :root{
   --bg:#f3f4f9;
   --card:#ffffff;
@@ -254,11 +256,12 @@ function formatWeekday(d){
 }
 
 // ================================================================
-// Общение с Google Apps Script
+// Общение с Google Apps Script (с логами)
 // ================================================================
 async function apiCall(action, payload = {}) {
   const method = (action === 'setRoster' || action === 'setAttendance' || action === 'setGroupName') ? 'POST' : 'GET';
   const url = SCRIPT_URL + (method === 'GET' ? '?' + new URLSearchParams({action, ...payload}) : '');
+  console.log(`[apiCall] ${method} ${url}`);
   const options = {
     method,
     headers: { 'Content-Type': 'application/json' }
@@ -267,8 +270,11 @@ async function apiCall(action, payload = {}) {
     options.body = JSON.stringify({action, ...payload});
   }
   const response = await fetch(url, options);
-  if (!response.ok) throw new Error('HTTP error ' + response.status);
-  return await response.json();
+  console.log(`[apiCall] response status: ${response.status}`);
+  if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+  const data = await response.json();
+  console.log(`[apiCall] data:`, data);
+  return data;
 }
 
 // ================================================================
@@ -276,6 +282,7 @@ async function apiCall(action, payload = {}) {
 // ================================================================
 async function loadAllData() {
   try {
+    console.log('[loadAllData] Загружаем список и название...');
     const [rosterRes, groupNameRes] = await Promise.all([
       apiCall('getRoster'),
       apiCall('getGroupName')
@@ -283,11 +290,13 @@ async function loadAllData() {
     
     let rosterData = rosterRes.roster;
     if (!rosterData || rosterData.length === 0) {
+      console.log('[loadAllData] Список пуст, создаём дефолтный и отправляем на сервер');
       const students = DEFAULT_ROSTER.map((name, i) => ({ id: 's'+(i+1), name }));
       const newRoster = { nextId: students.length+1, students };
       await apiCall('setRoster', { roster: newRoster });
       state.roster = newRoster;
     } else {
+      console.log('[loadAllData] Список загружен, студентов:', rosterData.length);
       let maxId = 0;
       rosterData.forEach(s => {
         const num = parseInt(s.id.replace('s',''));
@@ -298,9 +307,15 @@ async function loadAllData() {
     
     state.groupName = groupNameRes.groupName || 'Группа';
     renderGroupTitle();
+    renderRosterSettings();
+    console.log('[loadAllData] Готово');
   } catch (e) {
-    showToast('Ошибка загрузки данных');
-    console.error(e);
+    console.error('[loadAllData] Ошибка:', e);
+    showToast('Ошибка загрузки данных. Проверьте интернет и URL скрипта.');
+    // В случае ошибки используем дефолтный список локально, но без синхронизации
+    const students = DEFAULT_ROSTER.map((name, i) => ({ id: 's'+(i+1), name }));
+    state.roster = { nextId: students.length+1, students };
+    renderRosterSettings();
   }
 }
 
@@ -309,9 +324,12 @@ async function loadAllData() {
 // ================================================================
 async function loadAttendanceForDate(date) {
   try {
+    console.log('[loadAttendanceForDate] Загружаем отметки за', dateKey(date));
     const res = await apiCall('getAttendance', { date: dateKey(date) });
     state.dayData = res.attendance || {};
+    console.log('[loadAttendanceForDate] Отметок:', Object.keys(state.dayData).length);
   } catch (e) {
+    console.error('[loadAttendanceForDate] Ошибка:', e);
     state.dayData = {};
     showToast('Ошибка загрузки отметок');
   }
@@ -324,14 +342,17 @@ async function loadAttendanceForDate(date) {
 // ================================================================
 async function saveAttendance(studentId, status) {
   try {
+    console.log('[saveAttendance] Сохраняем', studentId, status);
     const payload = {
       date: dateKey(state.currentDate),
       studentId,
       status: status || null
     };
     await apiCall('setAttendance', payload);
+    // Перезагружаем отметки для обновления интерфейса
     await loadAttendanceForDate(state.currentDate);
   } catch (e) {
+    console.error('[saveAttendance] Ошибка:', e);
     showToast('Ошибка сохранения отметки');
   }
 }
@@ -341,9 +362,11 @@ async function saveAttendance(studentId, status) {
 // ================================================================
 async function loadStats() {
   try {
+    console.log('[loadStats] Загружаем статистику');
     const res = await apiCall('getAllStats');
     return res.stats || {};
   } catch (e) {
+    console.error('[loadStats] Ошибка:', e);
     showToast('Ошибка загрузки статистики');
     return {};
   }
@@ -359,6 +382,7 @@ async function saveGroupName(name) {
     renderGroupTitle();
     showToast('Название сохранено');
   } catch (e) {
+    console.error('[saveGroupName] Ошибка:', e);
     showToast('Ошибка сохранения названия');
   }
 }
@@ -371,6 +395,7 @@ async function saveRoster() {
     await apiCall('setRoster', { roster: state.roster });
     showToast('Список обновлён');
   } catch (e) {
+    console.error('[saveRoster] Ошибка:', e);
     showToast('Ошибка сохранения списка');
   }
 }
@@ -611,6 +636,7 @@ function setupEvents() {
 async function init() {
   document.getElementById('loadingOverlay').style.display = 'flex';
   try {
+    console.log('[init] Начинаем инициализацию');
     await loadAllData();
     renderDateUI();
     await loadAttendanceForDate(state.currentDate);
@@ -619,9 +645,10 @@ async function init() {
     document.getElementById('loadingOverlay').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     setupEvents();
+    console.log('[init] Инициализация завершена');
   } catch (e) {
+    console.error('[init] Критическая ошибка:', e);
     document.getElementById('loadingOverlay').innerHTML = '<div>Ошибка загрузки. Проверьте интернет и настройки скрипта.</div>';
-    console.error(e);
   }
 }
 
