@@ -3,157 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="color-scheme" content="light">
-<title>Посещаемость группы</title>
+<title>Посещаемость группы (Gist)</title>
 <style>
 :root{
   --bg:#f3f4f9;
-  --card:#ffffff;
+  --card:#fff;
   --ink:#1c2033;
   --muted:#5d6277;
   --line:#e3e5ef;
   --accent:#33408f;
-  --accent-ink:#242c66;
   --present:#187a48;
-  --present-bg:#e1f4ea;
   --late:#8f5606;
-  --late-bg:#faf0dd;
   --absent:#b02f2f;
-  --absent-bg:#fbe7e7;
-  --unmarked:#8b8fa3;
   --radius:14px;
 }
 *{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
-body{
-  background:var(--bg);
-  color:var(--ink);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  font-size:16px;
-  line-height:1.45;
-  -webkit-font-smoothing:antialiased;
-}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:sans-serif;font-size:16px;line-height:1.45;}
 .app{max-width:640px;margin:0 auto;padding:16px 14px 56px;}
-header.top{padding:6px 2px 14px;}
-.group-title{font-size:22px;font-weight:700;margin:0;color:var(--accent-ink);}
-h2.group-sub, .group-sub{font-size:13px;color:var(--muted);margin:2px 0 14px;font-weight:600;}
+header{padding:6px 2px 14px;}
+h1{font-size:22px;margin:0;color:var(--accent);}
+.sub{font-size:13px;color:var(--muted);margin:2px 0 14px;font-weight:600;}
 .daterow{display:flex;align-items:center;gap:8px;}
-.daterow button{
-  width:44px;height:44px;flex:none;border-radius:11px;border:1px solid var(--line);
-  background:var(--card);font-size:19px;color:var(--accent);
-}
-.daterow button:active{background:var(--bg);}
-.datebox{
-  flex:1;background:var(--card);border:1px solid var(--line);border-radius:11px;
-  padding:5px 10px;display:flex;flex-direction:column;align-items:center;min-height:44px;justify-content:center;
-}
-.datebox input[type=date]{
-  border:none;font-size:15px;font-weight:700;color:var(--ink);background:transparent;
-  width:100%;text-align:center;font-family:inherit;
-}
-.weekday{font-size:12px;color:var(--muted);text-transform:capitalize;}
+.daterow button{width:44px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--card);font-size:19px;cursor:pointer;}
+.datebox{flex:1;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:5px 10px;text-align:center;}
+.datebox input{width:100%;border:none;font-size:15px;font-weight:700;background:transparent;text-align:center;font-family:inherit;}
+.weekday{font-size:12px;color:var(--muted);}
 .tabs{display:flex;gap:6px;margin:16px 0 12px;background:var(--card);padding:4px;border-radius:12px;border:1px solid var(--line);}
-.tab{flex:1;border:none;background:transparent;padding:10px 4px;border-radius:9px;font-size:14px;color:var(--muted);font-weight:600;}
+.tab{flex:1;border:none;background:transparent;padding:10px 4px;border-radius:9px;font-size:14px;color:var(--muted);font-weight:600;cursor:pointer;}
 .tab.active{background:var(--accent);color:#fff;}
 .panel{display:none;}
 .panel.active{display:block;}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
 .filters{display:flex;gap:8px;margin-bottom:12px;}
-.filters input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;min-width:0;}
-.filters select{padding:11px 8px;border-radius:10px;border:1px solid var(--line);font-size:13px;background:var(--card);color:var(--ink);}
+.filters input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;}
+.filters select{padding:11px 8px;border-radius:10px;border:1px solid var(--line);font-size:13px;}
 .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px;}
 .summary-cell{background:var(--bg);border-radius:10px;padding:8px 4px;text-align:center;border-top:3px solid var(--line);}
-.summary-cell .num{font-size:18px;font-weight:700;display:block;line-height:1.2;}
+.summary-cell .num{font-size:18px;font-weight:700;display:block;}
 .summary-cell .lbl{font-size:10.5px;color:var(--muted);}
-.summary-cell.c-present{border-top-color:var(--present);}
-.summary-cell.c-late{border-top-color:var(--late);}
-.summary-cell.c-absent{border-top-color:var(--absent);}
-.summary-cell.c-none{border-top-color:var(--unmarked);}
+.c-present{border-top-color:var(--present);}
+.c-late{border-top-color:var(--late);}
+.c-absent{border-top-color:var(--absent);}
+.c-none{border-top-color:var(--muted);}
 .refresh-row{display:flex;justify-content:flex-end;margin:10px 0 2px;}
-.refresh-row button{border:none;background:none;color:var(--accent);font-size:13px;font-weight:600;padding:4px 2px;}
+.refresh-row button{border:none;background:none;color:var(--accent);font-weight:600;padding:4px 2px;cursor:pointer;}
 details.bulk{margin-top:8px;}
-details.bulk summary{font-size:13px;color:var(--accent-ink);font-weight:600;cursor:pointer;padding:6px 0;list-style:none;}
-details.bulk summary::-webkit-details-marker{display:none;}
+details.bulk summary{font-size:13px;color:var(--accent);font-weight:600;cursor:pointer;list-style:none;}
 details.bulk summary::before{content:"▸ ";}
 details.bulk[open] summary::before{content:"▾ ";}
 details.bulk .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:6px;}
-details.bulk button{
-  border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--ink);font-weight:600;
-}
+details.bulk button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;}
 ul.student-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
 .student-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
 .student-name{font-size:15px;font-weight:600;margin-bottom:8px;}
 .status-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
-.status-btn{
-  border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:11px 4px;font-size:13px;font-weight:700;color:var(--muted);
-  min-height:44px;
-}
-.status-btn.present.active{background:var(--present-bg);border-color:var(--present);color:var(--present);}
-.status-btn.late.active{background:var(--late-bg);border-color:var(--late);color:var(--late);}
-.status-btn.absent.active{background:var(--absent-bg);border-color:var(--absent);color:var(--absent);}
-.empty-hint{text-align:center;color:var(--muted);font-size:14px;padding:28px 8px;}
+.status-btn{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:11px 4px;font-size:13px;font-weight:700;color:var(--muted);min-height:44px;cursor:pointer;}
+.status-btn.active.present{background:#e1f4ea;border-color:var(--present);color:var(--present);}
+.status-btn.active.late{background:#faf0dd;border-color:var(--late);color:var(--late);}
+.status-btn.active.absent{background:#fbe7e7;border-color:var(--absent);color:var(--absent);}
+.empty-hint{text-align:center;color:var(--muted);padding:28px 8px;}
 table.stats-table{width:100%;border-collapse:collapse;font-size:13.5px;}
 table.stats-table th,table.stats-table td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line);}
 table.stats-table th{color:var(--muted);font-weight:600;font-size:11.5px;}
 table.stats-table td.num,table.stats-table th.num{text-align:center;}
-table.stats-table tr:last-child td{border-bottom:none;}
 .settings-row{display:flex;gap:8px;}
-.settings-row input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;min-width:0;}
-.settings-row button{border:none;background:var(--accent);color:#fff;border-radius:10px;padding:0 16px;font-size:14px;font-weight:600;white-space:nowrap;}
+.settings-row input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;}
+.settings-row button{border:none;background:var(--accent);color:#fff;border-radius:10px;padding:0 16px;font-size:14px;font-weight:600;cursor:pointer;}
 ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
 .roster-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;}
-.roster-row button{border:none;background:none;color:var(--absent);font-size:16px;padding:2px 6px;font-weight:700;}
+.roster-row button{border:none;background:none;color:#b02f2f;font-size:16px;padding:2px 6px;font-weight:700;cursor:pointer;}
 .hint{font-size:12.5px;color:var(--muted);margin-top:6px;}
-.toast{
-  position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);
-  background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;
-  opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;max-width:88%;text-align:center;z-index:30;
-}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:30;}
 .toast.show{opacity:1;transform:translate(-50%,0);}
-.loading-overlay{
-  position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);z-index:20;padding:20px;
-}
+.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);z-index:20;padding:20px;}
 .spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-@media (prefers-reduced-motion: reduce){
-  .spinner{animation:none;border-top-color:var(--accent);}
-  .toast{transition:none;}
-}
 </style>
 </head>
 <body>
 
 <div id="loadingOverlay" class="loading-overlay">
   <div class="spinner"></div>
-  <div>Загрузка…</div>
+  <div>Загрузка данных…</div>
 </div>
 
 <div class="app" id="app" style="display:none;">
 
-  <header class="top">
-    <h1 class="group-title" id="groupTitleText">Группа</h1>
-    <div class="group-sub">Учёт посещаемости</div>
+  <header>
+    <h1 id="groupTitleText">Группа</h1>
+    <div class="sub">Учёт посещаемости (синхронизация через Gist)</div>
     <div class="daterow">
-      <button type="button" id="prevDay" aria-label="Предыдущий день">‹</button>
+      <button id="prevDay">‹</button>
       <div class="datebox">
         <input type="date" id="datePicker">
         <span class="weekday" id="weekdayLabel"></span>
       </div>
-      <button type="button" id="nextDay" aria-label="Следующий день">›</button>
+      <button id="nextDay">›</button>
     </div>
   </header>
 
   <nav class="tabs">
-    <button type="button" class="tab active" data-tab="mark">Отметка</button>
-    <button type="button" class="tab" data-tab="stats">Статистика</button>
-    <button type="button" class="tab" data-tab="settings">Группа</button>
+    <button class="tab active" data-tab="mark">Отметка</button>
+    <button class="tab" data-tab="stats">Статистика</button>
+    <button class="tab" data-tab="settings">Группа</button>
   </nav>
 
   <section class="panel active" id="panel-mark">
     <div class="card">
       <div class="filters">
         <input type="text" id="searchInput" placeholder="Найти по фамилии…">
-        <select id="statusFilter" aria-label="Фильтр по статусу">
+        <select id="statusFilter">
           <option value="all">Все</option>
           <option value="none">Не отмечены</option>
           <option value="P">Был</option>
@@ -162,12 +121,12 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
         </select>
       </div>
       <div class="summary-grid" id="summaryLine"></div>
-      <div class="refresh-row"><button type="button" id="refreshBtn">↻ Обновить</button></div>
+      <div class="refresh-row"><button id="refreshBtn">↻ Обновить</button></div>
       <details class="bulk">
         <summary>Действия старосты</summary>
         <div class="bulk-actions">
-          <button type="button" id="markAllPresentBtn">Отметить всех как «Был»</button>
-          <button type="button" id="clearDayBtn">Очистить день</button>
+          <button id="markAllPresentBtn">Отметить всех как «Был»</button>
+          <button id="clearDayBtn">Очистить день</button>
         </div>
       </details>
     </div>
@@ -186,20 +145,20 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
 
   <section class="panel" id="panel-settings">
     <div class="card">
-      <h2 class="group-sub" style="margin-bottom:10px;">Название группы</h2>
+      <h2 class="sub" style="margin-bottom:10px;">Название группы</h2>
       <div class="settings-row">
-        <input type="text" id="groupNameInput" placeholder="Например, ИУ5-53">
-        <button type="button" id="saveGroupNameBtn">Сохранить</button>
+        <input type="text" id="groupNameInput" placeholder="Название">
+        <button id="saveGroupNameBtn">Сохранить</button>
       </div>
     </div>
     <div class="card">
-      <h2 class="group-sub" style="margin-bottom:10px;">Список группы (<span id="rosterCount">0</span>)</h2>
+      <h2 class="sub" style="margin-bottom:10px;">Список группы (<span id="rosterCount">0</span>)</h2>
       <ul class="roster-list" id="rosterList"></ul>
       <div class="settings-row">
         <input type="text" id="newStudentInput" placeholder="Фамилия И. О.">
-        <button type="button" id="addStudentBtn">Добавить</button>
+        <button id="addStudentBtn">Добавить</button>
       </div>
-      <div class="hint">Список общий для всех, кто откроет страницу (сохраняется в Google Таблице).</div>
+      <div class="hint">Данные синхронизируются через GitHub Gist. Все пользователи видят одни и те же изменения.</div>
     </div>
   </section>
 
@@ -212,11 +171,12 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
 'use strict';
 
 // ================================================================
-// ТВОЙ URL ВЕБ-ПРИЛОЖЕНИЯ (уже вставлен!)
+// ⚠️ ВСТАВЬ СВОЙ ТОКЕН (с доступом к gist)
 // ================================================================
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8G1Rjrr-69HyHHdQ7IrCKLZ7-TC5F2II4_OOdSgUu8GzVULNuZhv5aasSrHf9IKVo/exec';
+const GIST_ID = 'e9a358b29582ddca53131e0838a25077';
+const GITHUB_TOKEN = 'ТВОЙ_ТОКЕН';   // замени на реальный токен, начинается с ghp_
 
-// Базовый список группы (используется только при первом запуске, если таблица пуста)
+// Базовый список группы (если данных нет)
 const DEFAULT_ROSTER = [
   "Абрамов В. М.","Артемов Е. Р.","Аушев Д. О.","Васильев А. А.","Васильченко И. А.",
   "Гаврильченко А. А.","Гадаев М. Р.","Гребенькова М. В.","Доронин М. Р.","Зыков Н. А.",
@@ -227,16 +187,54 @@ const DEFAULT_ROSTER = [
 ];
 
 // ================================================================
+// Работа с Gist API
+// ================================================================
+async function loadFromGist() {
+  const url = `https://api.github.com/gists/${GIST_ID}`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Не удалось загрузить Gist');
+  const data = await response.json();
+  const content = data.files['data.json']?.content;
+  if (!content) throw new Error('Файл data.json не найден в Gist');
+  return JSON.parse(content);
+}
+
+async function saveToGist(data) {
+  const url = `https://api.github.com/gists/${GIST_ID}`;
+  const payload = {
+    files: {
+      'data.json': {
+        content: JSON.stringify(data, null, 2)
+      }
+    }
+  };
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `token ${GITHUB_TOKEN}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/vnd.github.v3+json'
+    },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) throw new Error('Не удалось сохранить данные в Gist');
+  return response.json();
+}
+
+// ================================================================
 // Состояние
 // ================================================================
 const state = {
   roster: { nextId: 1, students: [] },
   groupName: '',
   currentDate: new Date(),
-  dayData: {},
   searchTerm: '',
   statusFilter: 'all'
 };
+
+// Кеш отметок и статистики (глобальные)
+let attendanceCache = {};
+let statsCache = {};
 
 // ================================================================
 // Вспомогательные функции
@@ -252,150 +250,60 @@ function parseDateKey(s){
 function formatWeekday(d){
   try { return d.toLocaleDateString('ru-RU', { weekday: 'long' }); } catch(e){ return ''; }
 }
-
-// ================================================================
-// Общение с Google Apps Script
-// ================================================================
-async function apiCall(action, payload = {}) {
-  const method = (action === 'setRoster' || action === 'setAttendance' || action === 'setGroupName') ? 'POST' : 'GET';
-  const url = SCRIPT_URL + (method === 'GET' ? '?' + new URLSearchParams({action, ...payload}) : '');
-  console.log(`[apiCall] ${method} ${url}`);
-  const options = {
-    method,
-    headers: { 'Content-Type': 'application/json' }
-  };
-  if (method === 'POST') {
-    options.body = JSON.stringify({action, ...payload});
-  }
-  const response = await fetch(url, options);
-  console.log(`[apiCall] response status: ${response.status}`);
-  if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-  const data = await response.json();
-  console.log(`[apiCall] data:`, data);
-  return data;
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+function statusClass(code){
+  if (code === 'P') return 'present';
+  if (code === 'L') return 'late';
+  if (code === 'A') return 'absent';
+  return '';
 }
 
 // ================================================================
-// Загрузка данных с сервера (с инициализацией, если пусто)
+// Загрузка/сохранение всех данных
 // ================================================================
 async function loadAllData() {
   try {
-    console.log('[loadAllData] Загружаем список и название...');
-    const [rosterRes, groupNameRes] = await Promise.all([
-      apiCall('getRoster'),
-      apiCall('getGroupName')
-    ]);
-    
-    let rosterData = rosterRes.roster;
-    if (!rosterData || rosterData.length === 0) {
-      console.log('[loadAllData] Список пуст, создаём дефолтный и отправляем на сервер');
-      const students = DEFAULT_ROSTER.map((name, i) => ({ id: 's'+(i+1), name }));
-      const newRoster = { nextId: students.length+1, students };
-      await apiCall('setRoster', { roster: newRoster });
-      state.roster = newRoster;
-    } else {
-      console.log('[loadAllData] Список загружен, студентов:', rosterData.length);
-      let maxId = 0;
-      rosterData.forEach(s => {
-        const num = parseInt(s.id.replace('s',''));
-        if (num > maxId) maxId = num;
-      });
-      state.roster = { nextId: maxId+1, students: rosterData };
-    }
-    
-    state.groupName = groupNameRes.groupName || 'Группа';
+    const remote = await loadFromGist();
+    state.roster = remote.roster || { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
+    state.groupName = remote.groupName || 'Группа';
+    attendanceCache = remote.attendance || {};
+    statsCache = remote.stats || {};
     renderGroupTitle();
     renderRosterSettings();
-    console.log('[loadAllData] Готово');
   } catch (e) {
-    console.error('[loadAllData] Ошибка:', e);
-    showToast('Ошибка загрузки данных. Проверьте интернет и URL скрипта.');
-    // В случае ошибки используем дефолтный список локально, но без синхронизации
-    const students = DEFAULT_ROSTER.map((name, i) => ({ id: 's'+(i+1), name }));
-    state.roster = { nextId: students.length+1, students };
+    console.error('Ошибка загрузки данных из Gist:', e);
+    state.roster = { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
+    state.groupName = 'Группа';
+    attendanceCache = {};
+    statsCache = {};
+    renderGroupTitle();
     renderRosterSettings();
   }
 }
 
-// ================================================================
-// Загрузка отметок за день
-// ================================================================
-async function loadAttendanceForDate(date) {
-  try {
-    console.log('[loadAttendanceForDate] Загружаем отметки за', dateKey(date));
-    const res = await apiCall('getAttendance', { date: dateKey(date) });
-    state.dayData = res.attendance || {};
-    console.log('[loadAttendanceForDate] Отметок:', Object.keys(state.dayData).length);
-  } catch (e) {
-    console.error('[loadAttendanceForDate] Ошибка:', e);
-    state.dayData = {};
-    showToast('Ошибка загрузки отметок');
-  }
-  renderStudentList();
-  renderSummary();
+async function saveAllData() {
+  const data = {
+    roster: state.roster,
+    groupName: state.groupName,
+    attendance: attendanceCache,
+    stats: statsCache
+  };
+  await saveToGist(data);
 }
 
 // ================================================================
-// Сохранение отметки
+// Работа с отметками
 // ================================================================
-async function saveAttendance(studentId, status) {
-  try {
-    console.log('[saveAttendance] Сохраняем', studentId, status);
-    const payload = {
-      date: dateKey(state.currentDate),
-      studentId,
-      status: status || null
-    };
-    await apiCall('setAttendance', payload);
-    // Перезагружаем отметки для обновления интерфейса
-    await loadAttendanceForDate(state.currentDate);
-  } catch (e) {
-    console.error('[saveAttendance] Ошибка:', e);
-    showToast('Ошибка сохранения отметки');
-  }
+function getDayData(date) {
+  const key = dateKey(date);
+  return attendanceCache[key] || {};
 }
 
-// ================================================================
-// Загрузка статистики
-// ================================================================
-async function loadStats() {
-  try {
-    console.log('[loadStats] Загружаем статистику');
-    const res = await apiCall('getAllStats');
-    return res.stats || {};
-  } catch (e) {
-    console.error('[loadStats] Ошибка:', e);
-    showToast('Ошибка загрузки статистики');
-    return {};
-  }
-}
-
-// ================================================================
-// Сохранение названия группы
-// ================================================================
-async function saveGroupName(name) {
-  try {
-    await apiCall('setGroupName', { name });
-    state.groupName = name;
-    renderGroupTitle();
-    showToast('Название сохранено');
-  } catch (e) {
-    console.error('[saveGroupName] Ошибка:', e);
-    showToast('Ошибка сохранения названия');
-  }
-}
-
-// ================================================================
-// Сохранение списка группы после изменений
-// ================================================================
-async function saveRoster() {
-  try {
-    await apiCall('setRoster', { roster: state.roster });
-    showToast('Список обновлён');
-  } catch (e) {
-    console.error('[saveRoster] Ошибка:', e);
-    showToast('Ошибка сохранения списка');
-  }
+function setDayData(date, dayData) {
+  const key = dateKey(date);
+  attendanceCache[key] = dayData;
 }
 
 // ================================================================
@@ -405,9 +313,10 @@ function renderStudentList() {
   const ul = document.getElementById('studentList');
   const term = state.searchTerm.trim().toLowerCase();
   const filter = state.statusFilter;
+  const dayData = getDayData(state.currentDate);
   const items = state.roster.students.filter(s => {
     if (term && s.name.toLowerCase().indexOf(term) === -1) return false;
-    const st = state.dayData[s.id] || '';
+    const st = dayData[s.id] || '';
     if (filter === 'none' && st !== '') return false;
     if (filter === 'P' && st !== 'P') return false;
     if (filter === 'L' && st !== 'L') return false;
@@ -419,7 +328,7 @@ function renderStudentList() {
     return;
   }
   ul.innerHTML = items.map(s => {
-    const st = state.dayData[s.id] || '';
+    const st = dayData[s.id] || '';
     const btn = (code, label) => {
       const active = st === code ? ' active' : '';
       return `<button type="button" class="status-btn ${statusClass(code)}${active}" data-status="${code}">${label}</button>`;
@@ -433,9 +342,10 @@ function renderStudentList() {
 
 function renderSummary() {
   const total = state.roster.students.length;
-  let p = 0, l = 0, a = 0;
+  const dayData = getDayData(state.currentDate);
+  let p=0,l=0,a=0;
   state.roster.students.forEach(s => {
-    const st = state.dayData[s.id];
+    const st = dayData[s.id];
     if (st === 'P') p++; else if (st === 'L') l++; else if (st === 'A') a++;
   });
   const none = total - p - l - a;
@@ -463,19 +373,18 @@ function renderRosterSettings() {
   ul.innerHTML = state.roster.students.map(s => `
     <li class="roster-row" data-id="${s.id}">
       <span>${escapeHtml(s.name)}</span>
-      <button type="button" class="removeStudentBtn" data-id="${s.id}" aria-label="Удалить ${escapeHtml(s.name)}">✕</button>
+      <button class="removeStudentBtn" data-id="${s.id}">✕</button>
     </li>`).join('');
 }
 
-async function renderStats() {
+function renderStats() {
   const loadingEl = document.getElementById('statsLoading');
   const tableEl = document.getElementById('statsTable');
   tableEl.hidden = true;
   loadingEl.hidden = false;
   loadingEl.textContent = 'Загружаю статистику…';
-  const totals = await loadStats();
   const rows = state.roster.students.map(s => {
-    const t = totals[s.id] || {P:0, L:0, A:0};
+    const t = statsCache[s.id] || {P:0,L:0,A:0};
     const sum = t.P + t.L + t.A;
     const pct = sum > 0 ? Math.round((t.P/sum)*100) : null;
     return { name: s.name, P: t.P, L: t.L, A: t.A, pct, sortKey: t.L + t.A };
@@ -495,16 +404,22 @@ async function renderStats() {
 }
 
 // ================================================================
-// HELPER
+// Действия
 // ================================================================
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-}
-function statusClass(code){
-  if (code === 'P') return 'present';
-  if (code === 'L') return 'late';
-  if (code === 'A') return 'absent';
-  return '';
+async function setStatus(studentId, newStatus) {
+  const dayData = getDayData(state.currentDate);
+  const oldStatus = dayData[studentId] || null;
+  if (newStatus) dayData[studentId] = newStatus;
+  else delete dayData[studentId];
+  setDayData(state.currentDate, dayData);
+  // обновляем статистику
+  if (!statsCache[studentId]) statsCache[studentId] = {P:0,L:0,A:0};
+  if (oldStatus && statsCache[studentId][oldStatus] > 0) statsCache[studentId][oldStatus]--;
+  if (newStatus) statsCache[studentId][newStatus] = (statsCache[studentId][newStatus] || 0) + 1;
+  // Сохраняем в Gist
+  await saveAllData();
+  renderStudentList();
+  renderSummary();
 }
 
 // ================================================================
@@ -536,11 +451,11 @@ function switchTab(name){
 // ================================================================
 // DATE NAVIGATION
 // ================================================================
-async function goToDate(d) {
+function goToDate(d) {
   state.currentDate = d;
   renderDateUI();
-  document.getElementById('studentList').innerHTML = '<li class="empty-hint">Загрузка…</li>';
-  await loadAttendanceForDate(d);
+  renderStudentList();
+  renderSummary();
 }
 
 // ================================================================
@@ -557,7 +472,13 @@ function setupEvents() {
     if (!e.target.value) return;
     goToDate(parseDateKey(e.target.value));
   });
-  document.getElementById('refreshBtn').addEventListener('click', () => goToDate(state.currentDate));
+  document.getElementById('refreshBtn').addEventListener('click', async () => {
+    try {
+      await loadAllData();
+      goToDate(state.currentDate);
+      showToast('Данные обновлены');
+    } catch(e) { showToast('Ошибка обновления: ' + e.message); }
+  });
 
   document.getElementById('searchInput').addEventListener('input', e => {
     state.searchTerm = e.target.value; renderStudentList();
@@ -567,20 +488,35 @@ function setupEvents() {
   });
 
   document.getElementById('markAllPresentBtn').addEventListener('click', async () => {
-    const todo = state.roster.students.filter(s => !state.dayData[s.id]);
+    const dayData = getDayData(state.currentDate);
+    const todo = state.roster.students.filter(s => !dayData[s.id]);
     if (!todo.length) { showToast('Все уже отмечены'); return; }
     for (let s of todo) {
-      await saveAttendance(s.id, 'P');
+      dayData[s.id] = 'P';
+      if (!statsCache[s.id]) statsCache[s.id] = {P:0,L:0,A:0};
+      statsCache[s.id].P = (statsCache[s.id].P || 0) + 1;
     }
+    setDayData(state.currentDate, dayData);
+    await saveAllData();
+    renderStudentList();
+    renderSummary();
     showToast('Отмечены присутствующими: ' + todo.length);
   });
 
   document.getElementById('clearDayBtn').addEventListener('click', async () => {
     if (!confirm('Очистить все отметки за этот день?')) return;
-    const todo = state.roster.students.filter(s => state.dayData[s.id]);
+    const dayData = getDayData(state.currentDate);
+    const todo = state.roster.students.filter(s => dayData[s.id]);
+    if (!todo.length) { showToast('Нет отметок для очистки'); return; }
     for (let s of todo) {
-      await saveAttendance(s.id, null);
+      const oldStatus = dayData[s.id];
+      delete dayData[s.id];
+      if (statsCache[s.id] && statsCache[s.id][oldStatus] > 0) statsCache[s.id][oldStatus]--;
     }
+    setDayData(state.currentDate, dayData);
+    await saveAllData();
+    renderStudentList();
+    renderSummary();
     showToast('День очищен');
   });
 
@@ -590,9 +526,10 @@ function setupEvents() {
     const row = e.target.closest('.student-row');
     const id = row.getAttribute('data-id');
     const status = btn.getAttribute('data-status');
-    const current = state.dayData[id] || null;
+    const dayData = getDayData(state.currentDate);
+    const current = dayData[id] || null;
     const newStatus = (current === status) ? null : status;
-    await saveAttendance(id, newStatus);
+    await setStatus(id, newStatus);
   });
 
   document.querySelectorAll('.tab').forEach(btn => {
@@ -601,7 +538,12 @@ function setupEvents() {
 
   document.getElementById('saveGroupNameBtn').addEventListener('click', async () => {
     const v = document.getElementById('groupNameInput').value.trim();
-    if (v) await saveGroupName(v);
+    if (v) {
+      state.groupName = v;
+      await saveAllData();
+      renderGroupTitle();
+      showToast('Название сохранено');
+    }
   });
 
   document.getElementById('addStudentBtn').addEventListener('click', async () => {
@@ -612,8 +554,10 @@ function setupEvents() {
     state.roster.nextId += 1;
     state.roster.students.push({ id, name });
     input.value = '';
+    await saveAllData();
     renderRosterSettings();
-    await saveRoster();
+    renderStudentList();
+    showToast('Добавлено: ' + name);
   });
 
   document.getElementById('rosterList').addEventListener('click', async e => {
@@ -623,8 +567,10 @@ function setupEvents() {
     const name = state.roster.students.find(s => s.id === id)?.name || id;
     if (!confirm(`Удалить ${name} из списка группы?`)) return;
     state.roster.students = state.roster.students.filter(s => s.id !== id);
+    await saveAllData();
     renderRosterSettings();
-    await saveRoster();
+    renderStudentList();
+    showToast('Удалено: ' + name);
   });
 }
 
@@ -634,19 +580,18 @@ function setupEvents() {
 async function init() {
   document.getElementById('loadingOverlay').style.display = 'flex';
   try {
-    console.log('[init] Начинаем инициализацию');
     await loadAllData();
     renderDateUI();
-    await loadAttendanceForDate(state.currentDate);
+    renderStudentList();
+    renderSummary();
     renderGroupTitle();
     renderRosterSettings();
     document.getElementById('loadingOverlay').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     setupEvents();
-    console.log('[init] Инициализация завершена');
   } catch (e) {
-    console.error('[init] Критическая ошибка:', e);
-    document.getElementById('loadingOverlay').innerHTML = '<div>Ошибка загрузки. Проверьте интернет и настройки скрипта.</div>';
+    document.getElementById('loadingOverlay').innerHTML = '<div>Ошибка загрузки. Проверьте токен и ID гиста.</div>';
+    console.error(e);
   }
 }
 
