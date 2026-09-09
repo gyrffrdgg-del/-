@@ -6,90 +6,70 @@
 <meta name="color-scheme" content="light">
 <title>Посещаемость группы</title>
 <style>
-:root{
-  --bg:#f3f4f9;
-  --card:#fff;
-  --ink:#1c2033;
-  --muted:#5d6277;
-  --line:#e3e5ef;
-  --accent:#33408f;
-  --present:#187a48;
-  --present-bg:#e1f4ea;
-  --late:#8f5606;
-  --late-bg:#faf0dd;
-  --absent:#b02f2f;
-  --absent-bg:#fbe7e7;
-  --radius:14px;
-}
-*{box-sizing:border-box;}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.45;}
-.app{max-width:640px;margin:0 auto;padding:16px 14px 56px;}
-header{padding:6px 2px 14px;}
-h1{font-size:22px;margin:0;color:var(--accent);}
-.sub{font-size:13px;color:var(--muted);margin:2px 0 14px;font-weight:600;}
-.daterow{display:flex;align-items:center;gap:8px;}
-.daterow button{width:44px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--card);font-size:19px;cursor:pointer;}
-.datebox{flex:1;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:5px 10px;text-align:center;}
-.datebox input{width:100%;border:none;font-size:15px;font-weight:700;background:transparent;text-align:center;font-family:inherit;}
-.weekday{font-size:12px;color:var(--muted);}
-.tabs{display:flex;gap:6px;margin:16px 0 12px;background:var(--card);padding:4px;border-radius:12px;border:1px solid var(--line);}
-.tab{flex:1;border:none;background:transparent;padding:10px 4px;border-radius:9px;font-size:14px;color:var(--muted);font-weight:600;cursor:pointer;}
-.tab.active{background:var(--accent);color:#fff;}
-.panel{display:none;}
-.panel.active{display:block;}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
-.filters{display:flex;gap:8px;margin-bottom:12px;}
-.filters input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;min-width:0;}
-.filters select{padding:11px 8px;border-radius:10px;border:1px solid var(--line);font-size:13px;}
-.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px;}
-.summary-cell{background:var(--bg);border-radius:10px;padding:8px 4px;text-align:center;border-top:3px solid var(--line);}
-.summary-cell .num{font-size:18px;font-weight:700;display:block;}
-.summary-cell .lbl{font-size:10.5px;color:var(--muted);}
-.c-present{border-top-color:var(--present);}
-.c-late{border-top-color:var(--late);}
-.c-absent{border-top-color:var(--absent);}
-.c-none{border-top-color:var(--muted);}
-.refresh-row{display:flex;justify-content:flex-end;margin:10px 0 2px;}
-.refresh-row button{border:none;background:none;color:var(--accent);font-weight:600;padding:4px 2px;cursor:pointer;}
-details.bulk{margin-top:8px;}
-details.bulk summary{font-size:13px;color:var(--accent);font-weight:600;cursor:pointer;list-style:none;}
-details.bulk summary::before{content:"▸ ";}
-details.bulk[open] summary::before{content:"▾ ";}
-details.bulk .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:6px;}
-details.bulk button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;}
-ul.student-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
-.student-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
-.student-name{font-size:15px;font-weight:600;margin-bottom:8px;}
-.status-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
-.status-btn{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:11px 4px;font-size:13px;font-weight:700;color:var(--muted);min-height:44px;cursor:pointer;}
-.status-btn.active.present{background:var(--present-bg);border-color:var(--present);color:var(--present);}
-.status-btn.active.late{background:var(--late-bg);border-color:var(--late);color:var(--late);}
-.status-btn.active.absent{background:var(--absent-bg);border-color:var(--absent);color:var(--absent);}
-.empty-hint{text-align:center;color:var(--muted);padding:28px 8px;}
-table.stats-table{width:100%;border-collapse:collapse;font-size:13.5px;}
-table.stats-table th,table.stats-table td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line);}
-table.stats-table th{color:var(--muted);font-weight:600;font-size:11.5px;}
-table.stats-table td.num,table.stats-table th.num{text-align:center;}
-.settings-row{display:flex;gap:8px;}
-.settings-row input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;min-width:0;}
-.settings-row button{border:none;background:var(--accent);color:#fff;border-radius:10px;padding:0 16px;font-size:14px;font-weight:600;cursor:pointer;}
-ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
-.roster-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;}
-.roster-row button{border:none;background:none;color:#b02f2f;font-size:16px;padding:2px 6px;font-weight:700;cursor:pointer;}
-.hint{font-size:12.5px;color:var(--muted);margin-top:6px;}
-.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:30;max-width:88%;text-align:center;}
-.toast.show{opacity:1;transform:translate(-50%,0);}
-.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);z-index:20;padding:20px;}
-.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
+:root{--bg:#f3f4f9;--card:#fff;--ink:#1c2033;--muted:#5d6277;--line:#e3e5ef;--accent:#33408f;--present:#187a48;--late:#8f5606;--absent:#b02f2f;--radius:14px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:sans-serif;font-size:16px;line-height:1.45}
+.app{max-width:640px;margin:0 auto;padding:16px 14px 56px}
+header{padding:6px 2px 14px}
+h1{font-size:22px;margin:0;color:var(--accent)}
+.sub{font-size:13px;color:var(--muted);margin:2px 0 14px;font-weight:600}
+.daterow{display:flex;align-items:center;gap:8px}
+.daterow button{width:44px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--card);font-size:19px;cursor:pointer}
+.datebox{flex:1;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:5px 10px;text-align:center}
+.datebox input{width:100%;border:none;font-size:15px;font-weight:700;background:transparent;text-align:center;font-family:inherit}
+.weekday{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:6px;margin:16px 0 12px;background:var(--card);padding:4px;border-radius:12px;border:1px solid var(--line)}
+.tab{flex:1;border:none;background:transparent;padding:10px 4px;border-radius:9px;font-size:14px;color:var(--muted);font-weight:600;cursor:pointer}
+.tab.active{background:var(--accent);color:#fff}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.filters{display:flex;gap:8px;margin-bottom:12px}
+.filters input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px}
+.filters select{padding:11px 8px;border-radius:10px;border:1px solid var(--line);font-size:13px}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px}
+.summary-cell{background:var(--bg);border-radius:10px;padding:8px 4px;text-align:center;border-top:3px solid var(--line)}
+.summary-cell .num{font-size:18px;font-weight:700;display:block}
+.summary-cell .lbl{font-size:10.5px;color:var(--muted)}
+.c-present{border-top-color:var(--present)}
+.c-late{border-top-color:var(--late)}
+.c-absent{border-top-color:var(--absent)}
+.c-none{border-top-color:var(--muted)}
+.refresh-row{display:flex;justify-content:flex-end;margin:10px 0 2px}
+.refresh-row button{border:none;background:none;color:var(--accent);font-weight:600;padding:4px 2px;cursor:pointer}
+details.bulk{margin-top:8px}
+details.bulk summary{font-size:13px;color:var(--accent);font-weight:600;cursor:pointer;list-style:none}
+details.bulk summary::before{content:"▸ "}
+details.bulk[open] summary::before{content:"▾ "}
+details.bulk .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:6px}
+details.bulk button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer}
+ul.student-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.student-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.student-name{font-size:15px;font-weight:600;margin-bottom:8px}
+.status-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.status-btn{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:11px 4px;font-size:13px;font-weight:700;color:var(--muted);min-height:44px;cursor:pointer}
+.status-btn.active.present{background:#e1f4ea;border-color:var(--present);color:var(--present)}
+.status-btn.active.late{background:#faf0dd;border-color:var(--late);color:var(--late)}
+.status-btn.active.absent{background:#fbe7e7;border-color:var(--absent);color:var(--absent)}
+.empty-hint{text-align:center;color:var(--muted);padding:28px 8px}
+table.stats-table{width:100%;border-collapse:collapse;font-size:13.5px}
+table.stats-table th,table.stats-table td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line)}
+table.stats-table th{color:var(--muted);font-weight:600;font-size:11.5px}
+table.stats-table td.num,table.stats-table th.num{text-align:center}
+.settings-row{display:flex;gap:8px}
+.settings-row input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px}
+.settings-row button{border:none;background:var(--accent);color:#fff;border-radius:10px;padding:0 16px;font-size:14px;font-weight:600;cursor:pointer}
+ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.roster-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px}
+.roster-row button{border:none;background:none;color:#b02f2f;font-size:16px;padding:2px 6px;font-weight:700;cursor:pointer}
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:30;max-width:88%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);z-index:20;padding:20px}
+.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-
-<div id="loadingOverlay" class="loading-overlay">
-  <div class="spinner"></div>
-  <div>Загрузка данных…</div>
-</div>
+<div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div><div>Загрузка данных…</div></div>
 
 <div class="app" id="app" style="display:none;">
   <header>
@@ -173,20 +153,18 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
 'use strict';
 
 // ============================================================
-// НАСТРОЙКИ — впиши сюда свои значения
+// НАСТРОЙКИ — замени ТОЛЬКО токен на новый (классический, ghp_)
 // ============================================================
-const GIST_ID = 'e9a358b29582ddca53131e0838a25077'; // из скриншота; проверь, что это тот самый gist
-const GITHUB_TOKEN = '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'; // classic-токен ТОЛЬКО с правом "gist", начинается с ghp_
-// ============================================================
+const GIST_ID = 'e9a358b29582ddca53131e0838a25077';
+const GITHUB_TOKEN = 'ghp_ТВОЙ_НОВЫЙ_ТОКЕН';   // вставь сюда новый токен, начинается с ghp_
 
 const DEFAULT_ROSTER = [
   "Абрамов В. М.","Артемов Е. Р.","Аушев Д. О.","Васильев А. А.","Васильченко И. А.",
   "Гаврильченко А. А.","Гадаев М. Р.","Гребенькова М. В.","Доронин М. Р.","Зыков Н. А.",
   "Казарян А. Б.","Кириченко А. В. (С)","Кирюшатов А. П.","Колесов Е. Р.","Конаков В. Д.",
-  "Костюков К. С.","Крюков И. А.","Левченко И. С.","Муталиев М. Р.","Новоселов А. Г.",
+  "Костюков К. С.","Крюков И. А.","Левченко И. С.","Муталиев М. Р.","Новосел А. Г.",
   "Паршин Р. В.","Патрахин И. Д.","Петриченко А. И.","Плохотинченко Д. И.","Рыженко К. С.",
-  "Селезнев И. В.","Тоболькин Н. И.","Харченко Д. А.","Чуванько Ю. М.","Шашлова Д. С.",
-  "Шматко А. Е."
+  "Селезнев И. В.","Харченко Д. А.","Чуванько Ю. М.","Шматко А. Е."
 ];
 
 const API_BASE = `https://api.github.com/gists/${GIST_ID}`;
@@ -204,7 +182,6 @@ const state = {
   statusFilter: 'all'
 };
 
-// ---------- date helpers ----------
 function dateKey(d){
   const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
   return `${y}-${m}-${day}`;
@@ -217,19 +194,19 @@ function formatWeekday(d){ try { return d.toLocaleDateString('ru-RU', { weekday:
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 function statusClass(code){ if (code==='P') return 'present'; if (code==='L') return 'late'; if (code==='A') return 'absent'; return ''; }
 
-// ---------- Gist API: fetch always gets ALL files fresh; patch only sends the files that changed ----------
 async function gistFetchAll(){
   const res = await fetch(API_BASE, {
     headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json' }
   });
   if (!res.ok){
-    if (res.status===404) throw new Error('404: гист не найден — проверь GIST_ID');
-    if (res.status===401) throw new Error('401: токен не принят — проверь GITHUB_TOKEN и его права');
-    if (res.status===403) throw new Error('403: доступ запрещён (возможно, лимит запросов) — попробуй чуть позже');
-    throw new Error('код ' + res.status);
+    if (res.status===404) throw new Error('Гист не найден (проверь GIST_ID)');
+    if (res.status===401) throw new Error('Токен не принят (проверь GITHUB_TOKEN)');
+    if (res.status===403) throw new Error('Доступ запрещён (возможно, лимит запросов)');
+    throw new Error('Ошибка ' + res.status);
   }
   return res.json();
 }
+
 async function gistPatchFiles(filesObj){
   const files = {};
   Object.keys(filesObj).forEach(name => { files[name] = { content: filesObj[name] }; });
@@ -243,13 +220,14 @@ async function gistPatchFiles(filesObj){
     body: JSON.stringify({ files })
   });
   if (!res.ok){
-    if (res.status===401) throw new Error('401: токен не принят или без прав gist');
-    if (res.status===404) throw new Error('404: гист не найден');
-    if (res.status===403) throw new Error('403: возможно, лимит запросов — попробуй позже');
-    throw new Error('код ' + res.status);
+    if (res.status===401) throw new Error('Токен не принят');
+    if (res.status===404) throw new Error('Гист не найден');
+    if (res.status===403) throw new Error('Лимит запросов');
+    throw new Error('Ошибка ' + res.status);
   }
   return res.json();
 }
+
 function fileContent(gist, filename){
   const f = gist.files && gist.files[filename];
   return (f && f.content != null) ? f.content : null;
@@ -272,7 +250,6 @@ function extractStats(gist, studentId){
 }
 function nameById(id){ const s = state.roster.students.find(s=>s.id===id); return s ? s.name : id; }
 
-// ---------- attendance actions: each one re-fetches fresh data right before writing ----------
 async function setStatus(studentId, newStatus){
   const prevDisplayed = state.dayData[studentId] || null;
   if (newStatus) state.dayData[studentId] = newStatus; else delete state.dayData[studentId];
@@ -345,7 +322,6 @@ async function clearDay(){
   } catch(e){ showToast('Ошибка: ' + e.message); }
 }
 
-// ---------- rendering ----------
 function renderStudentList(){
   const ul = document.getElementById('studentList');
   const term = state.searchTerm.trim().toLowerCase();
@@ -372,6 +348,7 @@ function renderStudentList(){
     </li>`;
   }).join('');
 }
+
 function renderSummary(){
   const total = state.roster.students.length;
   let p=0,l=0,a=0;
@@ -383,14 +360,17 @@ function renderSummary(){
     <div class="summary-cell c-absent"><span class="num">${a}</span><span class="lbl">Не был</span></div>
     <div class="summary-cell c-none"><span class="num">${none}</span><span class="lbl">Не отмечен</span></div>`;
 }
+
 function renderDateUI(){
   document.getElementById('datePicker').value = dateKey(state.currentDate);
   document.getElementById('weekdayLabel').textContent = formatWeekday(state.currentDate);
 }
+
 function renderGroupTitle(){
   document.getElementById('groupTitleText').textContent = state.groupName || 'Группа';
   document.getElementById('groupNameInput').value = state.groupName || '';
 }
+
 function renderRosterSettings(){
   const ul = document.getElementById('rosterList');
   document.getElementById('rosterCount').textContent = state.roster.students.length;
@@ -398,6 +378,7 @@ function renderRosterSettings(){
     <li class="roster-row" data-id="${s.id}"><span>${escapeHtml(s.name)}</span>
       <button type="button" class="removeStudentBtn" data-id="${s.id}">✕</button></li>`).join('');
 }
+
 async function renderStats(){
   const loadingEl = document.getElementById('statsLoading');
   const tableEl = document.getElementById('statsTable');
@@ -418,7 +399,6 @@ async function renderStats(){
   } catch(e){ loadingEl.textContent = 'Ошибка загрузки: ' + e.message; }
 }
 
-// ---------- toast ----------
 let toastTimer = null;
 function showToast(msg){
   const t = document.getElementById('toast');
@@ -427,13 +407,13 @@ function showToast(msg){
   toastTimer = setTimeout(()=>t.classList.remove('show'), 3200);
 }
 
-// ---------- tabs & navigation ----------
 function switchTab(name){
   document.querySelectorAll('.tab').forEach(btn=>btn.classList.toggle('active', btn.getAttribute('data-tab')===name));
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+name));
   if (name==='stats') renderStats();
   if (name==='settings') renderRosterSettings();
 }
+
 async function goToDate(d){
   state.currentDate = d;
   renderDateUI();
@@ -445,7 +425,6 @@ async function goToDate(d){
   renderStudentList(); renderSummary();
 }
 
-// ---------- events ----------
 function setupEvents(){
   document.getElementById('prevDay').addEventListener('click', ()=>{ const d=new Date(state.currentDate); d.setDate(d.getDate()-1); goToDate(d); });
   document.getElementById('nextDay').addEventListener('click', ()=>{ const d=new Date(state.currentDate); d.setDate(d.getDate()+1); goToDate(d); });
@@ -508,11 +487,10 @@ function setupEvents(){
   });
 }
 
-// ---------- init ----------
 async function init(){
-  if (!GITHUB_TOKEN || GITHUB_TOKEN === 'ТВОЙ_ТОКЕН'){
+  if (!GITHUB_TOKEN || GITHUB_TOKEN === 'ghp_ТВОЙ_НОВЫЙ_ТОКЕН'){
     document.getElementById('loadingOverlay').innerHTML =
-      '<div style="max-width:300px;text-align:center;">Не вставлен токен GitHub. Открой файл и замени ТВОЙ_ТОКЕН на настоящий (см. инструкцию).</div>';
+      '<div style="max-width:300px;text-align:center;">Не вставлен правильный токен. Создай классический токен (ghp_) с доступом к gist.</div>';
     return;
   }
   try {
@@ -532,7 +510,7 @@ async function init(){
     setupEvents();
   } catch(e){
     document.getElementById('loadingOverlay').innerHTML =
-      '<div style="max-width:300px;text-align:center;">Ошибка загрузки: '+escapeHtml(e.message)+'. Проверь GIST_ID и токен в коде.</div>';
+      '<div style="max-width:300px;text-align:center;">Ошибка: '+escapeHtml(e.message)+'. Проверь токен и ID гиста.</div>';
   }
 }
 
