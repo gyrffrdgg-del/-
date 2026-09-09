@@ -66,15 +66,17 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
 .loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);z-index:20;padding:20px}
 .spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.export-import{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.export-import button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;flex:1}
 </style>
 </head>
 <body>
-<div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div><div>Загрузка данных…</div></div>
+<div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div><div>Загрузка…</div></div>
 
 <div class="app" id="app" style="display:none;">
   <header>
     <h1 id="groupTitleText">Группа</h1>
-    <div class="sub">Учёт посещаемости (синхронизация)</div>
+    <div class="sub">Учёт посещаемости (локальное хранилище)</div>
     <div class="daterow">
       <button id="prevDay">‹</button>
       <div class="datebox">
@@ -141,7 +143,12 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
         <input type="text" id="newStudentInput" placeholder="Фамилия И. О.">
         <button id="addStudentBtn">Добавить</button>
       </div>
-      <div class="hint">Данные синхронизируются через jsonbin.io. Все пользователи видят одни и те же изменения.</div>
+      <div class="export-import">
+        <button id="exportDataBtn">📥 Экспорт данных</button>
+        <button id="importDataBtn">📤 Импорт данных</button>
+        <input type="file" id="fileInput" style="display:none" accept=".json">
+      </div>
+      <div class="hint">Данные хранятся локально в вашем браузере. Для синхронизации с другими устройствами используйте экспорт/импорт.</div>
     </div>
   </section>
 </div>
@@ -152,12 +159,6 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
 (function(){
 'use strict';
 
-// ================================================================
-// ВСТАВЬ СВОЙ API-КЛЮЧ (X-Master-Key)
-// ================================================================
-const API_KEY = '$2a$10$8iKbqkcEhIfiTNkG7.2mNuQGBoktv3ft7ZzuXI5rUEiRpLUrmyWum';
-
-// Базовый список группы (если данных нет)
 const DEFAULT_ROSTER = [
   "Абрамов В. М.","Артемов Е. Р.","Аушев Д. О.","Васильев А. А.","Васильченко И. А.",
   "Гаврильченко А. А.","Гадаев М. Р.","Гребенькова М. В.","Доронин М. Р.","Зыков Н. А.",
@@ -167,9 +168,6 @@ const DEFAULT_ROSTER = [
   "Селезнев И. В.","Харченко Д. А.","Чуванько Ю. М.","Шматко А. Е."
 ];
 
-// ================================================================
-// Состояние
-// ================================================================
 const state = {
   roster: { nextId: 1, students: [] },
   groupName: '',
@@ -179,97 +177,42 @@ const state = {
   statusFilter: 'all'
 };
 
-// Храним ID бина в localStorage после создания
-let binId = localStorage.getItem('jsonbin_binId') || null;
-
 // ================================================================
-// Работа с jsonbin.io (автосоздание бина)
+// Работа с localStorage
 // ================================================================
-async function ensureBin() {
-  if (binId) {
-    try {
-      // Проверяем, существует ли бин
-      const test = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-        headers: { 'X-Master-Key': API_KEY }
-      });
-      if (test.ok) return binId;
-    } catch(e) {}
-    // Если бин не найден, удаляем сохранённый ID и создаём новый
-    localStorage.removeItem('jsonbin_binId');
-    binId = null;
-  }
-
-  // Создаём новый бин
-  const response = await fetch('https://api.jsonbin.io/v3/b', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Master-Key': API_KEY
-    },
-    body: JSON.stringify({})
-  });
-  if (!response.ok) throw new Error('Не удалось создать бин');
-  const data = await response.json();
-  binId = data.metadata.id;
-  localStorage.setItem('jsonbin_binId', binId);
-  return binId;
-}
-
-async function loadFromBin() {
-  if (!binId) await ensureBin();
-  const url = `https://api.jsonbin.io/v3/b/${binId}/latest`;
-  const response = await fetch(url, {
-    headers: { 'X-Master-Key': API_KEY }
-  });
-  if (!response.ok) throw new Error('Не удалось загрузить данные');
-  const data = await response.json();
-  return data.record;
-}
-
-async function saveToBin(data) {
-  if (!binId) await ensureBin();
-  const url = `https://api.jsonbin.io/v3/b/${binId}`;
-  const response = await fetch(url, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Master-Key': API_KEY
-    },
-    body: JSON.stringify(data)
-  });
-  if (!response.ok) throw new Error('Не удалось сохранить данные');
-  return response.json();
-}
-
-// ================================================================
-// Загрузка/сохранение всех данных
-// ================================================================
-async function loadAllData() {
+function loadFromStorage() {
   try {
-    await ensureBin(); // убеждаемся, что бин существует
-    const remote = await loadFromBin();
-    state.roster = remote.roster || { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
-    state.groupName = remote.groupName || 'Группа';
-    state.dayData = remote.dayData || {};
-    renderGroupTitle();
-    renderRosterSettings();
-  } catch (e) {
-    console.error('Ошибка загрузки:', e);
-    state.roster = { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
-    state.groupName = 'Группа';
-    state.dayData = {};
-    renderGroupTitle();
-    renderRosterSettings();
-  }
+    const saved = localStorage.getItem('attendanceApp');
+    if (saved) {
+      const data = JSON.parse(saved);
+      state.roster = data.roster || { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
+      state.groupName = data.groupName || 'Группа';
+      state.dayData = data.dayData || {};
+      return true;
+    }
+  } catch(e) {}
+  return false;
 }
 
-async function saveAllData() {
+function saveToStorage() {
   const data = {
     roster: state.roster,
     groupName: state.groupName,
     dayData: state.dayData
   };
-  await saveToBin(data);
+  localStorage.setItem('attendanceApp', JSON.stringify(data));
+}
+
+// ================================================================
+// Инициализация при первом запуске
+// ================================================================
+function initData() {
+  if (!loadFromStorage()) {
+    state.roster = { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
+    state.groupName = 'Группа';
+    state.dayData = {};
+    saveToStorage();
+  }
 }
 
 // ================================================================
@@ -404,13 +347,13 @@ function renderStats() {
 // ================================================================
 // Действия
 // ================================================================
-async function setStatus(studentId, newStatus) {
+function setStatus(studentId, newStatus) {
   const key = dateKey(state.currentDate);
   if (!state.dayData[key]) state.dayData[key] = {};
   const dayData = state.dayData[key];
   if (newStatus) dayData[studentId] = newStatus;
   else delete dayData[studentId];
-  await saveAllData();
+  saveToStorage();
   renderStudentList();
   renderSummary();
 }
@@ -452,6 +395,54 @@ function goToDate(d) {
 }
 
 // ================================================================
+// Экспорт/Импорт
+// ================================================================
+function exportData() {
+  const data = {
+    roster: state.roster,
+    groupName: state.groupName,
+    dayData: state.dayData
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `attendance_${dateKey(new Date())}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Данные экспортированы');
+}
+
+function importData(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.roster && data.dayData !== undefined) {
+        state.roster = data.roster;
+        state.groupName = data.groupName || 'Группа';
+        state.dayData = data.dayData || {};
+        saveToStorage();
+        renderAll();
+        showToast('Данные импортированы');
+      } else {
+        showToast('Неверный формат файла');
+      }
+    } catch(err) {
+      showToast('Ошибка чтения файла');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function renderAll() {
+  renderGroupTitle();
+  renderRosterSettings();
+  renderStudentList();
+  renderSummary();
+}
+
+// ================================================================
 // EVENTS
 // ================================================================
 function setupEvents() {
@@ -465,12 +456,9 @@ function setupEvents() {
     if (!e.target.value) return;
     goToDate(parseDateKey(e.target.value));
   });
-  document.getElementById('refreshBtn').addEventListener('click', async () => {
-    try {
-      await loadAllData();
-      goToDate(state.currentDate);
-      showToast('Данные обновлены');
-    } catch(e) { showToast('Ошибка обновления: ' + e.message); }
+  document.getElementById('refreshBtn').addEventListener('click', () => {
+    renderAll();
+    showToast('Обновлено');
   });
 
   document.getElementById('searchInput').addEventListener('input', e => {
@@ -480,25 +468,25 @@ function setupEvents() {
     state.statusFilter = e.target.value; renderStudentList();
   });
 
-  document.getElementById('markAllPresentBtn').addEventListener('click', async () => {
+  document.getElementById('markAllPresentBtn').addEventListener('click', () => {
     const key = dateKey(state.currentDate);
     if (!state.dayData[key]) state.dayData[key] = {};
     const dayData = state.dayData[key];
     const todo = state.roster.students.filter(s => !dayData[s.id]);
     if (!todo.length) { showToast('Все уже отмечены'); return; }
     todo.forEach(s => dayData[s.id] = 'P');
-    await saveAllData();
+    saveToStorage();
     renderStudentList();
     renderSummary();
     showToast('Отмечены присутствующими: ' + todo.length);
   });
 
-  document.getElementById('clearDayBtn').addEventListener('click', async () => {
+  document.getElementById('clearDayBtn').addEventListener('click', () => {
     if (!confirm('Очистить все отметки за этот день?')) return;
     const key = dateKey(state.currentDate);
     if (state.dayData[key]) {
       delete state.dayData[key];
-      await saveAllData();
+      saveToStorage();
       renderStudentList();
       renderSummary();
       showToast('День очищен');
@@ -507,7 +495,7 @@ function setupEvents() {
     }
   });
 
-  document.getElementById('studentList').addEventListener('click', async e => {
+  document.getElementById('studentList').addEventListener('click', e => {
     const btn = e.target.closest('.status-btn');
     if (!btn) return;
     const row = e.target.closest('.student-row');
@@ -517,24 +505,24 @@ function setupEvents() {
     const dayData = state.dayData[key] || {};
     const current = dayData[id] || null;
     const newStatus = (current === status) ? null : status;
-    await setStatus(id, newStatus);
+    setStatus(id, newStatus);
   });
 
   document.querySelectorAll('.tab').forEach(btn => {
     btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
   });
 
-  document.getElementById('saveGroupNameBtn').addEventListener('click', async () => {
+  document.getElementById('saveGroupNameBtn').addEventListener('click', () => {
     const v = document.getElementById('groupNameInput').value.trim();
     if (v) {
       state.groupName = v;
-      await saveAllData();
+      saveToStorage();
       renderGroupTitle();
       showToast('Название сохранено');
     }
   });
 
-  document.getElementById('addStudentBtn').addEventListener('click', async () => {
+  document.getElementById('addStudentBtn').addEventListener('click', () => {
     const input = document.getElementById('newStudentInput');
     const name = input.value.trim();
     if (!name) return;
@@ -542,45 +530,47 @@ function setupEvents() {
     state.roster.nextId += 1;
     state.roster.students.push({ id, name });
     input.value = '';
-    await saveAllData();
+    saveToStorage();
     renderRosterSettings();
     renderStudentList();
     showToast('Добавлено: ' + name);
   });
 
-  document.getElementById('rosterList').addEventListener('click', async e => {
+  document.getElementById('rosterList').addEventListener('click', e => {
     const btn = e.target.closest('.removeStudentBtn');
     if (!btn) return;
     const id = btn.getAttribute('data-id');
     const name = state.roster.students.find(s => s.id === id)?.name || id;
     if (!confirm(`Удалить ${name} из списка группы?`)) return;
     state.roster.students = state.roster.students.filter(s => s.id !== id);
-    await saveAllData();
+    saveToStorage();
     renderRosterSettings();
     renderStudentList();
     showToast('Удалено: ' + name);
+  });
+
+  document.getElementById('exportDataBtn').addEventListener('click', exportData);
+  document.getElementById('importDataBtn').addEventListener('click', () => {
+    document.getElementById('fileInput').click();
+  });
+  document.getElementById('fileInput').addEventListener('change', e => {
+    if (e.target.files.length) {
+      importData(e.target.files[0]);
+      e.target.value = '';
+    }
   });
 }
 
 // ================================================================
 // INIT
 // ================================================================
-async function init() {
-  document.getElementById('loadingOverlay').style.display = 'flex';
-  try {
-    await loadAllData();
-    renderDateUI();
-    renderStudentList();
-    renderSummary();
-    renderGroupTitle();
-    renderRosterSettings();
-    document.getElementById('loadingOverlay').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    setupEvents();
-  } catch (e) {
-    document.getElementById('loadingOverlay').innerHTML = '<div>Ошибка загрузки. Проверьте API-ключ.</div>';
-    console.error(e);
-  }
+function init() {
+  initData();
+  renderDateUI();
+  renderAll();
+  document.getElementById('loadingOverlay').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  setupEvents();
 }
 
 init();
