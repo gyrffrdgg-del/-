@@ -34,11 +34,9 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 .app{max-width:640px;margin:0 auto;padding:16px 14px 56px;}
-
 header.top{padding:6px 2px 14px;}
 .group-title{font-size:22px;font-weight:700;margin:0;color:var(--accent-ink);}
 h2.group-sub, .group-sub{font-size:13px;color:var(--muted);margin:2px 0 14px;font-weight:600;}
-
 .daterow{display:flex;align-items:center;gap:8px;}
 .daterow button{
   width:44px;height:44px;flex:none;border-radius:11px;border:1px solid var(--line);
@@ -54,20 +52,15 @@ h2.group-sub, .group-sub{font-size:13px;color:var(--muted);margin:2px 0 14px;fon
   width:100%;text-align:center;font-family:inherit;
 }
 .weekday{font-size:12px;color:var(--muted);text-transform:capitalize;}
-
 .tabs{display:flex;gap:6px;margin:16px 0 12px;background:var(--card);padding:4px;border-radius:12px;border:1px solid var(--line);}
 .tab{flex:1;border:none;background:transparent;padding:10px 4px;border-radius:9px;font-size:14px;color:var(--muted);font-weight:600;}
 .tab.active{background:var(--accent);color:#fff;}
-
 .panel{display:none;}
 .panel.active{display:block;}
-
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
-
 .filters{display:flex;gap:8px;margin-bottom:12px;}
 .filters input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;min-width:0;}
 .filters select{padding:11px 8px;border-radius:10px;border:1px solid var(--line);font-size:13px;background:var(--card);color:var(--ink);}
-
 .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px;}
 .summary-cell{background:var(--bg);border-radius:10px;padding:8px 4px;text-align:center;border-top:3px solid var(--line);}
 .summary-cell .num{font-size:18px;font-weight:700;display:block;line-height:1.2;}
@@ -76,10 +69,8 @@ h2.group-sub, .group-sub{font-size:13px;color:var(--muted);margin:2px 0 14px;fon
 .summary-cell.c-late{border-top-color:var(--late);}
 .summary-cell.c-absent{border-top-color:var(--absent);}
 .summary-cell.c-none{border-top-color:var(--unmarked);}
-
 .refresh-row{display:flex;justify-content:flex-end;margin:10px 0 2px;}
 .refresh-row button{border:none;background:none;color:var(--accent);font-size:13px;font-weight:600;padding:4px 2px;}
-
 details.bulk{margin-top:8px;}
 details.bulk summary{font-size:13px;color:var(--accent-ink);font-weight:600;cursor:pointer;padding:6px 0;list-style:none;}
 details.bulk summary::-webkit-details-marker{display:none;}
@@ -89,7 +80,6 @@ details.bulk .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:6px;}
 details.bulk button{
   border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--ink);font-weight:600;
 }
-
 ul.student-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
 .student-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
 .student-name{font-size:15px;font-weight:600;margin-bottom:8px;}
@@ -101,32 +91,25 @@ ul.student-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:c
 .status-btn.present.active{background:var(--present-bg);border-color:var(--present);color:var(--present);}
 .status-btn.late.active{background:var(--late-bg);border-color:var(--late);color:var(--late);}
 .status-btn.absent.active{background:var(--absent-bg);border-color:var(--absent);color:var(--absent);}
-
 .empty-hint{text-align:center;color:var(--muted);font-size:14px;padding:28px 8px;}
-
 table.stats-table{width:100%;border-collapse:collapse;font-size:13.5px;}
 table.stats-table th,table.stats-table td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line);}
 table.stats-table th{color:var(--muted);font-weight:600;font-size:11.5px;}
 table.stats-table td.num,table.stats-table th.num{text-align:center;}
 table.stats-table tr:last-child td{border-bottom:none;}
-
 .settings-row{display:flex;gap:8px;}
 .settings-row input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;min-width:0;}
 .settings-row button{border:none;background:var(--accent);color:#fff;border-radius:10px;padding:0 16px;font-size:14px;font-weight:600;white-space:nowrap;}
-
 ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
 .roster-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;}
 .roster-row button{border:none;background:none;color:var(--absent);font-size:16px;padding:2px 6px;font-weight:700;}
-
 .hint{font-size:12.5px;color:var(--muted);margin-top:6px;}
-
 .toast{
   position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);
   background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;
   opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;max-width:88%;text-align:center;z-index:30;
 }
 .toast.show{opacity:1;transform:translate(-50%,0);}
-
 .loading-overlay{
   position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);z-index:20;padding:20px;
 }
@@ -216,7 +199,7 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
         <input type="text" id="newStudentInput" placeholder="Фамилия И. О.">
         <button type="button" id="addStudentBtn">Добавить</button>
       </div>
-      <div class="hint">Список сохраняется в вашем браузере (только для этого устройства).</div>
+      <div class="hint">Список общий для всех, кто откроет страницу (сохраняется в Google Таблице).</div>
     </div>
   </section>
 
@@ -228,47 +211,36 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
 (function(){
 'use strict';
 
+// ================================================================
+// 1. ВСТАВЬ СВОЙ URL ВЕБ-ПРИЛОЖЕНИЯ (из шага 1)
+// ================================================================
+const SCRIPT_URL = 'https://script.google.com/macros/s/ТВОЙ_УНИКАЛЬНЫЙ_АДРЕС/exec';
+
+// Базовый список группы (используется только при первом запуске, если таблица пуста)
 const DEFAULT_ROSTER = [
   "Абрамов В. М.","Артемов Е. Р.","Аушев Д. О.","Васильев А. А.","Васильченко И. А.",
   "Гаврильченко А. А.","Гадаев М. Р.","Гребенькова М. В.","Доронин М. Р.","Зыков Н. А.",
   "Казарян А. Б.","Кириченко А. В. (С)","Кирюшатов А. П.","Колесов Е. Р.","Конаков В. Д.",
-  "Костюков К. С.","Крюков И. А.","Левченко И. С.","Муталиев М. Р.","Новоселов А. Г.",
+  "Костюков К. С.","Крюков И. А.","Левченко И. С.","Муталиев М. Р.","Новосел А. Г.",
   "Паршин Р. В.","Патрахин И. Д.","Петриченко А. И.","Плохотинченко Д. И.","Рыженко К. С.",
-  "Селезнев И. В.","Тоболькин Н. И.","Харченко Д. А.","Чуванько Ю. М.","Шашлова Д. С.",
-  "Шматко А. Е."
+  "Селезнев И. В.","Харченко Д. А.","Чуванько Ю. М.","Шматко А. Е."
 ];
 
-// ---- localStorage helpers ----
-function storageGet(key) {
-  const val = localStorage.getItem(key);
-  if (val === null) return null;
-  try { return JSON.parse(val); } catch(e) { return val; }
-}
-function storageSet(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-function storageRemove(key) {
-  localStorage.removeItem(key);
-}
-function storageKeys(prefix) {
-  const keys = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k && k.startsWith(prefix)) keys.push(k);
-  }
-  return keys;
-}
-
+// ================================================================
+// Состояние
+// ================================================================
 const state = {
   roster: { nextId: 1, students: [] },
   groupName: '',
   currentDate: new Date(),
-  dayData: {}, // studentId -> 'P','L','A'
+  dayData: {},
   searchTerm: '',
   statusFilter: 'all'
 };
 
-// ---------- date helpers ----------
+// ================================================================
+// Вспомогательные функции
+// ================================================================
 function dateKey(d){
   const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
   return `${y}-${m}-${day}`;
@@ -281,137 +253,152 @@ function formatWeekday(d){
   try { return d.toLocaleDateString('ru-RU', { weekday: 'long' }); } catch(e){ return ''; }
 }
 
-// ---------- roster ----------
-function loadRoster(){
-  const raw = storageGet('roster');
-  if (raw && Array.isArray(raw.students)) {
-    return raw;
+// ================================================================
+// Общение с Google Apps Script
+// ================================================================
+async function apiCall(action, payload = {}) {
+  const method = (action === 'setRoster' || action === 'setAttendance' || action === 'setGroupName') ? 'POST' : 'GET';
+  const url = SCRIPT_URL + (method === 'GET' ? '?' + new URLSearchParams({action, ...payload}) : '');
+  const options = {
+    method,
+    headers: { 'Content-Type': 'application/json' }
+  };
+  if (method === 'POST') {
+    options.body = JSON.stringify({action, ...payload});
   }
-  const students = DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1), name}));
-  const roster = { nextId: students.length+1, students };
-  storageSet('roster', roster);
-  return roster;
-}
-function persistRoster(){
-  storageSet('roster', state.roster);
+  const response = await fetch(url, options);
+  if (!response.ok) throw new Error('HTTP error ' + response.status);
+  return await response.json();
 }
 
-function loadGroupName(){
-  return storageGet('groupName') || '';
-}
-function persistGroupName(){
-  storageSet('groupName', state.groupName);
-}
-
-function nameById(id){
-  const s = state.roster.students.find(s=>s.id===id);
-  return s ? s.name : id;
-}
-
-// ---------- attendance ----------
-function dayKeyPrefix(date){
-  return `att:${dateKey(date)}:`;
-}
-
-function loadDayData(date){
-  const prefix = dayKeyPrefix(date);
-  const keys = storageKeys(prefix);
-  const data = {};
-  keys.forEach(key => {
-    const studentId = key.slice(prefix.length);
-    const val = storageGet(key);
-    if (val) data[studentId] = val;
-  });
-  return data;
-}
-
-function applyLocal(studentId, newStatus){
-  const old = state.dayData[studentId] || null;
-  if (newStatus) state.dayData[studentId] = newStatus;
-  else delete state.dayData[studentId];
-  return old;
+// ================================================================
+// Загрузка данных с сервера (с инициализацией, если пусто)
+// ================================================================
+async function loadAllData() {
+  try {
+    const [rosterRes, groupNameRes] = await Promise.all([
+      apiCall('getRoster'),
+      apiCall('getGroupName')
+    ]);
+    
+    let rosterData = rosterRes.roster;
+    if (!rosterData || rosterData.length === 0) {
+      const students = DEFAULT_ROSTER.map((name, i) => ({ id: 's'+(i+1), name }));
+      const newRoster = { nextId: students.length+1, students };
+      await apiCall('setRoster', { roster: newRoster });
+      state.roster = newRoster;
+    } else {
+      let maxId = 0;
+      rosterData.forEach(s => {
+        const num = parseInt(s.id.replace('s',''));
+        if (num > maxId) maxId = num;
+      });
+      state.roster = { nextId: maxId+1, students: rosterData };
+    }
+    
+    state.groupName = groupNameRes.groupName || 'Группа';
+    renderGroupTitle();
+  } catch (e) {
+    showToast('Ошибка загрузки данных');
+    console.error(e);
+  }
 }
 
-function persistStatus(studentId, oldStatus, newStatus){
-  const key = dayKeyPrefix(state.currentDate) + studentId;
-  if (newStatus) storageSet(key, newStatus);
-  else storageRemove(key);
-
-  // update global stats (per student totals)
-  const statsKey = 'stats:' + studentId;
-  let stats = storageGet(statsKey) || {P:0, L:0, A:0};
-  if (oldStatus && typeof stats[oldStatus]==='number') stats[oldStatus] = Math.max(0, stats[oldStatus]-1);
-  if (newStatus) stats[newStatus] = (stats[newStatus]||0)+1;
-  storageSet(statsKey, stats);
-}
-
-function setStatus(studentId, newStatus){
-  const old = applyLocal(studentId, newStatus);
+// ================================================================
+// Загрузка отметок за день
+// ================================================================
+async function loadAttendanceForDate(date) {
+  try {
+    const res = await apiCall('getAttendance', { date: dateKey(date) });
+    state.dayData = res.attendance || {};
+  } catch (e) {
+    state.dayData = {};
+    showToast('Ошибка загрузки отметок');
+  }
   renderStudentList();
   renderSummary();
-  persistStatus(studentId, old, newStatus);
 }
 
-function markAllPresent(){
-  const todo = state.roster.students.filter(s=>!state.dayData[s.id]);
-  if (!todo.length){ showToast('Все уже отмечены'); return; }
-  const changes = todo.map(s=>({id:s.id, old: applyLocal(s.id,'P')}));
-  renderStudentList(); renderSummary();
-  changes.forEach(c => persistStatus(c.id, c.old, 'P'));
-  showToast('Отмечены присутствующими: ' + changes.length);
+// ================================================================
+// Сохранение отметки
+// ================================================================
+async function saveAttendance(studentId, status) {
+  try {
+    const payload = {
+      date: dateKey(state.currentDate),
+      studentId,
+      status: status || null
+    };
+    await apiCall('setAttendance', payload);
+    await loadAttendanceForDate(state.currentDate);
+  } catch (e) {
+    showToast('Ошибка сохранения отметки');
+  }
 }
 
-function clearDay(){
-  if (!confirm('Очистить все отметки за этот день?')) return;
-  const todo = state.roster.students.filter(s=>state.dayData[s.id]);
-  const changes = todo.map(s=>({id:s.id, old: applyLocal(s.id,null)}));
-  renderStudentList(); renderSummary();
-  changes.forEach(c => persistStatus(c.id, c.old, null));
-  showToast('День очищен');
+// ================================================================
+// Загрузка статистики
+// ================================================================
+async function loadStats() {
+  try {
+    const res = await apiCall('getAllStats');
+    return res.stats || {};
+  } catch (e) {
+    showToast('Ошибка загрузки статистики');
+    return {};
+  }
 }
 
-// ---------- stats ----------
-function loadStatsTotals(){
-  const totals = {};
-  state.roster.students.forEach(s => {
-    const stats = storageGet('stats:'+s.id) || {P:0, L:0, A:0};
-    totals[s.id] = stats;
-  });
-  return totals;
+// ================================================================
+// Сохранение названия группы
+// ================================================================
+async function saveGroupName(name) {
+  try {
+    await apiCall('setGroupName', { name });
+    state.groupName = name;
+    renderGroupTitle();
+    showToast('Название сохранено');
+  } catch (e) {
+    showToast('Ошибка сохранения названия');
+  }
 }
 
-// ---------- rendering ----------
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-}
-function statusClass(code){
-  if (code==='P') return 'present';
-  if (code==='L') return 'late';
-  if (code==='A') return 'absent';
-  return '';
+// ================================================================
+// Сохранение списка группы после изменений
+// ================================================================
+async function saveRoster() {
+  try {
+    await apiCall('setRoster', { roster: state.roster });
+    showToast('Список обновлён');
+  } catch (e) {
+    showToast('Ошибка сохранения списка');
+  }
 }
 
-function renderStudentList(){
+// ================================================================
+// RENDER FUNCTIONS
+// ================================================================
+function renderStudentList() {
   const ul = document.getElementById('studentList');
   const term = state.searchTerm.trim().toLowerCase();
   const filter = state.statusFilter;
-  const items = state.roster.students.filter(s=>{
-    if (term && s.name.toLowerCase().indexOf(term)===-1) return false;
+  const items = state.roster.students.filter(s => {
+    if (term && s.name.toLowerCase().indexOf(term) === -1) return false;
     const st = state.dayData[s.id] || '';
-    if (filter==='none' && st!=='') return false;
-    if (filter==='P' && st!=='P') return false;
-    if (filter==='L' && st!=='L') return false;
-    if (filter==='A' && st!=='A') return false;
+    if (filter === 'none' && st !== '') return false;
+    if (filter === 'P' && st !== 'P') return false;
+    if (filter === 'L' && st !== 'L') return false;
+    if (filter === 'A' && st !== 'A') return false;
     return true;
   });
   if (!items.length){
     ul.innerHTML = '<li class="empty-hint">Никого не найдено</li>';
     return;
   }
-  ul.innerHTML = items.map(s=>{
+  ul.innerHTML = items.map(s => {
     const st = state.dayData[s.id] || '';
-    const btn = (code,label) => {
-      const active = st===code ? ' active' : '';
+    const btn = (code, label) => {
+      const active = st === code ? ' active' : '';
       return `<button type="button" class="status-btn ${statusClass(code)}${active}" data-status="${code}">${label}</button>`;
     };
     return `<li class="student-row" data-id="${s.id}">
@@ -421,14 +408,14 @@ function renderStudentList(){
   }).join('');
 }
 
-function renderSummary(){
+function renderSummary() {
   const total = state.roster.students.length;
-  let p=0,l=0,a=0;
-  state.roster.students.forEach(s=>{
+  let p = 0, l = 0, a = 0;
+  state.roster.students.forEach(s => {
     const st = state.dayData[s.id];
-    if (st==='P') p++; else if (st==='L') l++; else if (st==='A') a++;
+    if (st === 'P') p++; else if (st === 'L') l++; else if (st === 'A') a++;
   });
-  const none = total-p-l-a;
+  const none = total - p - l - a;
   document.getElementById('summaryLine').innerHTML = `
     <div class="summary-cell c-present"><span class="num">${p}</span><span class="lbl">Был</span></div>
     <div class="summary-cell c-late"><span class="num">${l}</span><span class="lbl">Опоздал</span></div>
@@ -437,174 +424,209 @@ function renderSummary(){
   `;
 }
 
-function renderDateUI(){
+function renderDateUI() {
   document.getElementById('datePicker').value = dateKey(state.currentDate);
   document.getElementById('weekdayLabel').textContent = formatWeekday(state.currentDate);
 }
 
-function renderGroupTitle(){
+function renderGroupTitle() {
   document.getElementById('groupTitleText').textContent = state.groupName || 'Группа';
   document.getElementById('groupNameInput').value = state.groupName || '';
 }
 
-function renderRosterSettings(){
+function renderRosterSettings() {
   const ul = document.getElementById('rosterList');
   document.getElementById('rosterCount').textContent = state.roster.students.length;
-  ul.innerHTML = state.roster.students.map(s=>`
+  ul.innerHTML = state.roster.students.map(s => `
     <li class="roster-row" data-id="${s.id}">
       <span>${escapeHtml(s.name)}</span>
       <button type="button" class="removeStudentBtn" data-id="${s.id}" aria-label="Удалить ${escapeHtml(s.name)}">✕</button>
     </li>`).join('');
 }
 
-function renderStats(){
+async function renderStats() {
   const loadingEl = document.getElementById('statsLoading');
   const tableEl = document.getElementById('statsTable');
   tableEl.hidden = true;
   loadingEl.hidden = false;
   loadingEl.textContent = 'Загружаю статистику…';
-  const totals = loadStatsTotals();
-  const rows = state.roster.students.map(s=>{
-    const t = totals[s.id] || {P:0,L:0,A:0};
-    const sum = t.P+t.L+t.A;
-    const pct = sum>0 ? Math.round((t.P/sum)*100) : null;
-    return { name:s.name, P:t.P, L:t.L, A:t.A, pct, sortKey: t.L+t.A };
+  const totals = await loadStats();
+  const rows = state.roster.students.map(s => {
+    const t = totals[s.id] || {P:0, L:0, A:0};
+    const sum = t.P + t.L + t.A;
+    const pct = sum > 0 ? Math.round((t.P/sum)*100) : null;
+    return { name: s.name, P: t.P, L: t.L, A: t.A, pct, sortKey: t.L + t.A };
   });
-  if (!rows.length){ loadingEl.textContent = 'Список группы пуст'; return; }
-  rows.sort((a,b)=>b.sortKey-a.sortKey);
-  document.getElementById('statsBody').innerHTML = rows.map(r=>`
+  if (!rows.length) { loadingEl.textContent = 'Список группы пуст'; return; }
+  rows.sort((a,b) => b.sortKey - a.sortKey);
+  document.getElementById('statsBody').innerHTML = rows.map(r => `
     <tr>
       <td>${escapeHtml(r.name)}</td>
       <td class="num">${r.P}</td>
       <td class="num">${r.L}</td>
       <td class="num">${r.A}</td>
-      <td class="num">${r.pct===null?'—':r.pct+'%'}</td>
+      <td class="num">${r.pct === null ? '—' : r.pct+'%'}</td>
     </tr>`).join('');
   loadingEl.hidden = true;
   tableEl.hidden = false;
 }
 
-// ---------- toast ----------
+// ================================================================
+// HELPER
+// ================================================================
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+function statusClass(code){
+  if (code === 'P') return 'present';
+  if (code === 'L') return 'late';
+  if (code === 'A') return 'absent';
+  return '';
+}
+
+// ================================================================
+// TOAST
+// ================================================================
 let toastTimer = null;
 function showToast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-// ---------- tabs ----------
+// ================================================================
+// TABS
+// ================================================================
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach(btn=>{
-    btn.classList.toggle('active', btn.getAttribute('data-tab')===name);
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-tab') === name);
   });
-  document.querySelectorAll('.panel').forEach(p=>{
-    p.classList.toggle('active', p.id==='panel-'+name);
+  document.querySelectorAll('.panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'panel-'+name);
   });
-  if (name==='stats') renderStats();
-  if (name==='settings') renderRosterSettings();
+  if (name === 'stats') renderStats();
+  if (name === 'settings') renderRosterSettings();
 }
 
-// ---------- date navigation ----------
-function goToDate(d){
+// ================================================================
+// DATE NAVIGATION
+// ================================================================
+async function goToDate(d) {
   state.currentDate = d;
   renderDateUI();
   document.getElementById('studentList').innerHTML = '<li class="empty-hint">Загрузка…</li>';
-  state.dayData = loadDayData(d);
-  renderStudentList();
-  renderSummary();
+  await loadAttendanceForDate(d);
 }
 
-// ---------- events ----------
-function setupEvents(){
-  document.getElementById('prevDay').addEventListener('click', ()=>{
+// ================================================================
+// EVENTS
+// ================================================================
+function setupEvents() {
+  document.getElementById('prevDay').addEventListener('click', () => {
     const d = new Date(state.currentDate); d.setDate(d.getDate()-1); goToDate(d);
   });
-  document.getElementById('nextDay').addEventListener('click', ()=>{
+  document.getElementById('nextDay').addEventListener('click', () => {
     const d = new Date(state.currentDate); d.setDate(d.getDate()+1); goToDate(d);
   });
-  document.getElementById('datePicker').addEventListener('change', e=>{
+  document.getElementById('datePicker').addEventListener('change', e => {
     if (!e.target.value) return;
     goToDate(parseDateKey(e.target.value));
   });
-  document.getElementById('refreshBtn').addEventListener('click', ()=>goToDate(state.currentDate));
+  document.getElementById('refreshBtn').addEventListener('click', () => goToDate(state.currentDate));
 
-  document.getElementById('searchInput').addEventListener('input', e=>{
+  document.getElementById('searchInput').addEventListener('input', e => {
     state.searchTerm = e.target.value; renderStudentList();
   });
-  document.getElementById('statusFilter').addEventListener('change', e=>{
+  document.getElementById('statusFilter').addEventListener('change', e => {
     state.statusFilter = e.target.value; renderStudentList();
   });
 
-  document.getElementById('markAllPresentBtn').addEventListener('click', markAllPresent);
-  document.getElementById('clearDayBtn').addEventListener('click', clearDay);
+  document.getElementById('markAllPresentBtn').addEventListener('click', async () => {
+    const todo = state.roster.students.filter(s => !state.dayData[s.id]);
+    if (!todo.length) { showToast('Все уже отмечены'); return; }
+    for (let s of todo) {
+      await saveAttendance(s.id, 'P');
+    }
+    showToast('Отмечены присутствующими: ' + todo.length);
+  });
 
-  document.getElementById('studentList').addEventListener('click', e=>{
+  document.getElementById('clearDayBtn').addEventListener('click', async () => {
+    if (!confirm('Очистить все отметки за этот день?')) return;
+    const todo = state.roster.students.filter(s => state.dayData[s.id]);
+    for (let s of todo) {
+      await saveAttendance(s.id, null);
+    }
+    showToast('День очищен');
+  });
+
+  document.getElementById('studentList').addEventListener('click', async e => {
     const btn = e.target.closest('.status-btn');
     if (!btn) return;
     const row = e.target.closest('.student-row');
     const id = row.getAttribute('data-id');
     const status = btn.getAttribute('data-status');
     const current = state.dayData[id] || null;
-    setStatus(id, current===status ? null : status);
+    const newStatus = (current === status) ? null : status;
+    await saveAttendance(id, newStatus);
   });
 
-  document.querySelectorAll('.tab').forEach(btn=>{
-    btn.addEventListener('click', ()=>switchTab(btn.getAttribute('data-tab')));
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
   });
 
-  document.getElementById('saveGroupNameBtn').addEventListener('click', ()=>{
+  document.getElementById('saveGroupNameBtn').addEventListener('click', async () => {
     const v = document.getElementById('groupNameInput').value.trim();
-    state.groupName = v;
-    renderGroupTitle();
-    persistGroupName();
-    showToast('Название сохранено');
+    if (v) await saveGroupName(v);
   });
 
-  document.getElementById('addStudentBtn').addEventListener('click', ()=>{
+  document.getElementById('addStudentBtn').addEventListener('click', async () => {
     const input = document.getElementById('newStudentInput');
     const name = input.value.trim();
     if (!name) return;
-    const id = 's'+state.roster.nextId;
+    const id = 's' + state.roster.nextId;
     state.roster.nextId += 1;
-    state.roster.students.push({id, name});
+    state.roster.students.push({ id, name });
     input.value = '';
     renderRosterSettings();
-    persistRoster();
-    showToast('Добавлено: '+name);
+    await saveRoster();
   });
 
-  document.getElementById('rosterList').addEventListener('click', e=>{
+  document.getElementById('rosterList').addEventListener('click', async e => {
     const btn = e.target.closest('.removeStudentBtn');
     if (!btn) return;
     const id = btn.getAttribute('data-id');
-    const name = nameById(id);
+    const name = state.roster.students.find(s => s.id === id)?.name || id;
     if (!confirm(`Удалить ${name} из списка группы?`)) return;
-    state.roster.students = state.roster.students.filter(s=>s.id!==id);
+    state.roster.students = state.roster.students.filter(s => s.id !== id);
     renderRosterSettings();
-    persistRoster();
-    showToast('Удалено: '+name);
+    await saveRoster();
   });
 }
 
-// ---------- init ----------
-function init(){
-  state.roster = loadRoster();
-  state.groupName = loadGroupName();
-  renderGroupTitle();
-  renderDateUI();
-  state.dayData = loadDayData(state.currentDate);
-  renderStudentList();
-  renderSummary();
-
-  document.getElementById('loadingOverlay').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-
-  setupEvents();
+// ================================================================
+// INIT
+// ================================================================
+async function init() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+  try {
+    await loadAllData();
+    renderDateUI();
+    await loadAttendanceForDate(state.currentDate);
+    renderGroupTitle();
+    renderRosterSettings();
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    setupEvents();
+  } catch (e) {
+    document.getElementById('loadingOverlay').innerHTML = '<div>Ошибка загрузки. Проверьте интернет и настройки скрипта.</div>';
+    console.error(e);
+  }
 }
 
 init();
+
 })();
 </script>
 </body>
