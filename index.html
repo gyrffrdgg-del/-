@@ -3,94 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="color-scheme" content="light">
 <title>Посещаемость группы</title>
 <style>
-:root{--bg:#f3f4f9;--card:#fff;--ink:#1c2033;--muted:#5d6277;--line:#e3e5ef;--accent:#33408f;--present:#187a48;--late:#8f5606;--absent:#b02f2f;--radius:14px}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:sans-serif;font-size:16px;line-height:1.45}
-.app{max-width:640px;margin:0 auto;padding:16px 14px 56px}
-header{padding:6px 2px 14px}
-h1{font-size:22px;margin:0;color:var(--accent)}
-.sub{font-size:13px;color:var(--muted);margin:2px 0 14px;font-weight:600}
-.daterow{display:flex;align-items:center;gap:8px}
-.daterow button{width:44px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--card);font-size:19px;cursor:pointer}
-.datebox{flex:1;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:5px 10px;text-align:center}
-.datebox input{width:100%;border:none;font-size:15px;font-weight:700;background:transparent;text-align:center;font-family:inherit}
-.weekday{font-size:12px;color:var(--muted)}
-.tabs{display:flex;gap:6px;margin:16px 0 12px;background:var(--card);padding:4px;border-radius:12px;border:1px solid var(--line)}
-.tab{flex:1;border:none;background:transparent;padding:10px 4px;border-radius:9px;font-size:14px;color:var(--muted);font-weight:600;cursor:pointer}
-.tab.active{background:var(--accent);color:#fff}
-.panel{display:none}
-.panel.active{display:block}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px}
-.filters{display:flex;gap:8px;margin-bottom:12px}
-.filters input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px}
-.filters select{padding:11px 8px;border-radius:10px;border:1px solid var(--line);font-size:13px}
-.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px}
-.summary-cell{background:var(--bg);border-radius:10px;padding:8px 4px;text-align:center;border-top:3px solid var(--line)}
-.summary-cell .num{font-size:18px;font-weight:700;display:block}
-.summary-cell .lbl{font-size:10.5px;color:var(--muted)}
-.c-present{border-top-color:var(--present)}
-.c-late{border-top-color:var(--late)}
-.c-absent{border-top-color:var(--absent)}
-.c-none{border-top-color:var(--muted)}
-.refresh-row{display:flex;justify-content:flex-end;margin:10px 0 2px}
-.refresh-row button{border:none;background:none;color:var(--accent);font-weight:600;padding:4px 2px;cursor:pointer}
-details.bulk{margin-top:8px}
-details.bulk summary{font-size:13px;color:var(--accent);font-weight:600;cursor:pointer;list-style:none}
-details.bulk summary::before{content:"▸ "}
-details.bulk[open] summary::before{content:"▾ "}
-details.bulk .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:6px}
-details.bulk button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer}
-ul.student-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.student-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-.student-name{font-size:15px;font-weight:600;margin-bottom:8px}
-.status-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.status-btn{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:11px 4px;font-size:13px;font-weight:700;color:var(--muted);min-height:44px;cursor:pointer}
-.status-btn.active.present{background:#e1f4ea;border-color:var(--present);color:var(--present)}
-.status-btn.active.late{background:#faf0dd;border-color:var(--late);color:var(--late)}
-.status-btn.active.absent{background:#fbe7e7;border-color:var(--absent);color:var(--absent)}
-.empty-hint{text-align:center;color:var(--muted);padding:28px 8px}
-table.stats-table{width:100%;border-collapse:collapse;font-size:13.5px}
-table.stats-table th,table.stats-table td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line)}
-table.stats-table th{color:var(--muted);font-weight:600;font-size:11.5px}
-table.stats-table td.num,table.stats-table th.num{text-align:center}
-.settings-row{display:flex;gap:8px}
-.settings-row input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px}
-.settings-row button{border:none;background:var(--accent);color:#fff;border-radius:10px;padding:0 16px;font-size:14px;font-weight:600;cursor:pointer}
-ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.roster-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px}
-.roster-row button{border:none;background:none;color:#b02f2f;font-size:16px;padding:2px 6px;font-weight:700;cursor:pointer}
-.hint{font-size:12.5px;color:var(--muted);margin-top:6px}
-.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:30}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);z-index:20;padding:20px}
-.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.export-import{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.export-import button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;flex:1}
+:root{
+  --bg:#f3f4f9;
+  --card:#fff;
+  --ink:#1c2033;
+  --muted:#5d6277;
+  --line:#e3e5ef;
+  --accent:#33408f;
+  --present:#187a48;
+  --present-bg:#e1f4ea;
+  --late:#8f5606;
+  --late-bg:#faf0dd;
+  --absent:#b02f2f;
+  --absent-bg:#fbe7e7;
+  --radius:14px;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.45;}
+.app{max-width:640px;margin:0 auto;padding:16px 14px 56px;}
+header{padding:6px 2px 14px;}
+h1{font-size:22px;margin:0;color:var(--accent);}
+.sub{font-size:13px;color:var(--muted);margin:2px 0 14px;font-weight:600;}
+.daterow{display:flex;align-items:center;gap:8px;}
+.daterow button{width:44px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--card);font-size:19px;cursor:pointer;}
+.datebox{flex:1;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:5px 10px;text-align:center;}
+.datebox input{width:100%;border:none;font-size:15px;font-weight:700;background:transparent;text-align:center;font-family:inherit;}
+.weekday{font-size:12px;color:var(--muted);}
+.tabs{display:flex;gap:6px;margin:16px 0 12px;background:var(--card);padding:4px;border-radius:12px;border:1px solid var(--line);}
+.tab{flex:1;border:none;background:transparent;padding:10px 4px;border-radius:9px;font-size:14px;color:var(--muted);font-weight:600;cursor:pointer;}
+.tab.active{background:var(--accent);color:#fff;}
+.panel{display:none;}
+.panel.active{display:block;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
+.filters{display:flex;gap:8px;margin-bottom:12px;}
+.filters input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;min-width:0;}
+.filters select{padding:11px 8px;border-radius:10px;border:1px solid var(--line);font-size:13px;}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px;}
+.summary-cell{background:var(--bg);border-radius:10px;padding:8px 4px;text-align:center;border-top:3px solid var(--line);}
+.summary-cell .num{font-size:18px;font-weight:700;display:block;}
+.summary-cell .lbl{font-size:10.5px;color:var(--muted);}
+.c-present{border-top-color:var(--present);}
+.c-late{border-top-color:var(--late);}
+.c-absent{border-top-color:var(--absent);}
+.c-none{border-top-color:var(--muted);}
+.refresh-row{display:flex;justify-content:flex-end;margin:10px 0 2px;}
+.refresh-row button{border:none;background:none;color:var(--accent);font-weight:600;padding:4px 2px;cursor:pointer;}
+details.bulk{margin-top:8px;}
+details.bulk summary{font-size:13px;color:var(--accent);font-weight:600;cursor:pointer;list-style:none;}
+details.bulk summary::before{content:"▸ ";}
+details.bulk[open] summary::before{content:"▾ ";}
+details.bulk .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:6px;}
+details.bulk button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;}
+ul.student-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.student-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
+.student-name{font-size:15px;font-weight:600;margin-bottom:8px;}
+.status-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.status-btn{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:11px 4px;font-size:13px;font-weight:700;color:var(--muted);min-height:44px;cursor:pointer;}
+.status-btn.active.present{background:var(--present-bg);border-color:var(--present);color:var(--present);}
+.status-btn.active.late{background:var(--late-bg);border-color:var(--late);color:var(--late);}
+.status-btn.active.absent{background:var(--absent-bg);border-color:var(--absent);color:var(--absent);}
+.empty-hint{text-align:center;color:var(--muted);padding:28px 8px;}
+table.stats-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+table.stats-table th,table.stats-table td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--line);}
+table.stats-table th{color:var(--muted);font-weight:600;font-size:11.5px;}
+table.stats-table td.num,table.stats-table th.num{text-align:center;}
+.settings-row{display:flex;gap:8px;}
+.settings-row input[type=text]{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);font-size:15px;min-width:0;}
+.settings-row button{border:none;background:var(--accent);color:#fff;border-radius:10px;padding:0 16px;font-size:14px;font-weight:600;cursor:pointer;}
+ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.roster-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;}
+.roster-row button{border:none;background:none;color:#b02f2f;font-size:16px;padding:2px 6px;font-weight:700;cursor:pointer;}
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px;}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:10px;font-size:13.5px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:30;max-width:88%;text-align:center;}
+.toast.show{opacity:1;transform:translate(-50%,0);}
+.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);z-index:20;padding:20px;}
+.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
-<div id="loadingOverlay" class="loading-overlay"><div class="spinner"></div><div>Загрузка…</div></div>
+
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="spinner"></div>
+  <div>Загрузка данных…</div>
+</div>
 
 <div class="app" id="app" style="display:none;">
   <header>
     <h1 id="groupTitleText">Группа</h1>
-    <div class="sub">Учёт посещаемости (локальное хранилище)</div>
+    <div class="sub">Учёт посещаемости · синхронизация через GitHub Gist</div>
     <div class="daterow">
-      <button id="prevDay">‹</button>
+      <button type="button" id="prevDay">‹</button>
       <div class="datebox">
         <input type="date" id="datePicker">
         <span class="weekday" id="weekdayLabel"></span>
       </div>
-      <button id="nextDay">›</button>
+      <button type="button" id="nextDay">›</button>
     </div>
   </header>
 
   <nav class="tabs">
-    <button class="tab active" data-tab="mark">Отметка</button>
-    <button class="tab" data-tab="stats">Статистика</button>
-    <button class="tab" data-tab="settings">Группа</button>
+    <button type="button" class="tab active" data-tab="mark">Отметка</button>
+    <button type="button" class="tab" data-tab="stats">Статистика</button>
+    <button type="button" class="tab" data-tab="settings">Группа</button>
   </nav>
 
   <section class="panel active" id="panel-mark">
@@ -106,12 +124,12 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
         </select>
       </div>
       <div class="summary-grid" id="summaryLine"></div>
-      <div class="refresh-row"><button id="refreshBtn">↻ Обновить</button></div>
+      <div class="refresh-row"><button type="button" id="refreshBtn">↻ Обновить</button></div>
       <details class="bulk">
         <summary>Действия старосты</summary>
         <div class="bulk-actions">
-          <button id="markAllPresentBtn">Отметить всех как «Был»</button>
-          <button id="clearDayBtn">Очистить день</button>
+          <button type="button" id="markAllPresentBtn">Отметить всех как «Был»</button>
+          <button type="button" id="clearDayBtn">Очистить день</button>
         </div>
       </details>
     </div>
@@ -132,8 +150,8 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
     <div class="card">
       <h2 class="sub" style="margin-bottom:10px;">Название группы</h2>
       <div class="settings-row">
-        <input type="text" id="groupNameInput" placeholder="Название">
-        <button id="saveGroupNameBtn">Сохранить</button>
+        <input type="text" id="groupNameInput" placeholder="Например, ИУ5-53">
+        <button type="button" id="saveGroupNameBtn">Сохранить</button>
       </div>
     </div>
     <div class="card">
@@ -141,14 +159,9 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
       <ul class="roster-list" id="rosterList"></ul>
       <div class="settings-row">
         <input type="text" id="newStudentInput" placeholder="Фамилия И. О.">
-        <button id="addStudentBtn">Добавить</button>
+        <button type="button" id="addStudentBtn">Добавить</button>
       </div>
-      <div class="export-import">
-        <button id="exportDataBtn">📥 Экспорт данных</button>
-        <button id="importDataBtn">📤 Импорт данных</button>
-        <input type="file" id="fileInput" style="display:none" accept=".json">
-      </div>
-      <div class="hint">Данные хранятся локально в вашем браузере. Для синхронизации с другими устройствами используйте экспорт/импорт.</div>
+      <div class="hint">Данные лежат в вашем GitHub Gist — общие для всех, у кого есть ссылка на страницу.</div>
     </div>
   </section>
 </div>
@@ -159,14 +172,28 @@ ul.roster-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:co
 (function(){
 'use strict';
 
+// ============================================================
+// НАСТРОЙКИ — впиши сюда свои значения
+// ============================================================
+const GIST_ID = 'e9a358b29582ddca53131e0838a25077'; // из скриншота; проверь, что это тот самый gist
+const GITHUB_TOKEN = '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'; // classic-токен ТОЛЬКО с правом "gist", начинается с ghp_
+// ============================================================
+
 const DEFAULT_ROSTER = [
   "Абрамов В. М.","Артемов Е. Р.","Аушев Д. О.","Васильев А. А.","Васильченко И. А.",
   "Гаврильченко А. А.","Гадаев М. Р.","Гребенькова М. В.","Доронин М. Р.","Зыков Н. А.",
   "Казарян А. Б.","Кириченко А. В. (С)","Кирюшатов А. П.","Колесов Е. Р.","Конаков В. Д.",
-  "Костюков К. С.","Крюков И. А.","Левченко И. С.","Муталиев М. Р.","Новосел А. Г.",
+  "Костюков К. С.","Крюков И. А.","Левченко И. С.","Муталиев М. Р.","Новоселов А. Г.",
   "Паршин Р. В.","Патрахин И. Д.","Петриченко А. И.","Плохотинченко Д. И.","Рыженко К. С.",
-  "Селезнев И. В.","Харченко Д. А.","Чуванько Ю. М.","Шматко А. Е."
+  "Селезнев И. В.","Тоболькин Н. И.","Харченко Д. А.","Чуванько Ю. М.","Шашлова Д. С.",
+  "Шматко А. Е."
 ];
+
+const API_BASE = `https://api.github.com/gists/${GIST_ID}`;
+const ROSTER_FILE = 'roster.json';
+const GROUPNAME_FILE = 'group_name.txt';
+function dayFileName(date){ return `attendance_${dateKey(date)}.json`; }
+function statsFileName(id){ return `stats_${id}.json`; }
 
 const state = {
   roster: { nextId: 1, students: [] },
@@ -177,47 +204,7 @@ const state = {
   statusFilter: 'all'
 };
 
-// ================================================================
-// Работа с localStorage
-// ================================================================
-function loadFromStorage() {
-  try {
-    const saved = localStorage.getItem('attendanceApp');
-    if (saved) {
-      const data = JSON.parse(saved);
-      state.roster = data.roster || { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
-      state.groupName = data.groupName || 'Группа';
-      state.dayData = data.dayData || {};
-      return true;
-    }
-  } catch(e) {}
-  return false;
-}
-
-function saveToStorage() {
-  const data = {
-    roster: state.roster,
-    groupName: state.groupName,
-    dayData: state.dayData
-  };
-  localStorage.setItem('attendanceApp', JSON.stringify(data));
-}
-
-// ================================================================
-// Инициализация при первом запуске
-// ================================================================
-function initData() {
-  if (!loadFromStorage()) {
-    state.roster = { nextId: DEFAULT_ROSTER.length+1, students: DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1),name})) };
-    state.groupName = 'Группа';
-    state.dayData = {};
-    saveToStorage();
-  }
-}
-
-// ================================================================
-// Вспомогательные функции
-// ================================================================
+// ---------- date helpers ----------
 function dateKey(d){
   const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
   return `${y}-${m}-${day}`;
@@ -226,44 +213,157 @@ function parseDateKey(s){
   const parts = s.split('-');
   return new Date(parseInt(parts[0],10), parseInt(parts[1],10)-1, parseInt(parts[2],10));
 }
-function formatWeekday(d){
-  try { return d.toLocaleDateString('ru-RU', { weekday: 'long' }); } catch(e){ return ''; }
+function formatWeekday(d){ try { return d.toLocaleDateString('ru-RU', { weekday: 'long' }); } catch(e){ return ''; } }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+function statusClass(code){ if (code==='P') return 'present'; if (code==='L') return 'late'; if (code==='A') return 'absent'; return ''; }
+
+// ---------- Gist API: fetch always gets ALL files fresh; patch only sends the files that changed ----------
+async function gistFetchAll(){
+  const res = await fetch(API_BASE, {
+    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json' }
+  });
+  if (!res.ok){
+    if (res.status===404) throw new Error('404: гист не найден — проверь GIST_ID');
+    if (res.status===401) throw new Error('401: токен не принят — проверь GITHUB_TOKEN и его права');
+    if (res.status===403) throw new Error('403: доступ запрещён (возможно, лимит запросов) — попробуй чуть позже');
+    throw new Error('код ' + res.status);
+  }
+  return res.json();
 }
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+async function gistPatchFiles(filesObj){
+  const files = {};
+  Object.keys(filesObj).forEach(name => { files[name] = { content: filesObj[name] }; });
+  const res = await fetch(API_BASE, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `token ${GITHUB_TOKEN}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/vnd.github+json'
+    },
+    body: JSON.stringify({ files })
+  });
+  if (!res.ok){
+    if (res.status===401) throw new Error('401: токен не принят или без прав gist');
+    if (res.status===404) throw new Error('404: гист не найден');
+    if (res.status===403) throw new Error('403: возможно, лимит запросов — попробуй позже');
+    throw new Error('код ' + res.status);
+  }
+  return res.json();
 }
-function statusClass(code){
-  if (code === 'P') return 'present';
-  if (code === 'L') return 'late';
-  if (code === 'A') return 'absent';
-  return '';
+function fileContent(gist, filename){
+  const f = gist.files && gist.files[filename];
+  return (f && f.content != null) ? f.content : null;
+}
+function extractRoster(gist){
+  const raw = fileContent(gist, ROSTER_FILE);
+  if (raw){ try { const p = JSON.parse(raw); if (p && Array.isArray(p.students)) return p; } catch(e){} }
+  return null;
+}
+function extractGroupName(gist){ return fileContent(gist, GROUPNAME_FILE) || ''; }
+function extractDayData(gist, date){
+  const raw = fileContent(gist, dayFileName(date));
+  if (!raw) return {};
+  try { return JSON.parse(raw) || {}; } catch(e){ return {}; }
+}
+function extractStats(gist, studentId){
+  const raw = fileContent(gist, statsFileName(studentId));
+  if (!raw) return {P:0,L:0,A:0};
+  try { return JSON.parse(raw); } catch(e){ return {P:0,L:0,A:0}; }
+}
+function nameById(id){ const s = state.roster.students.find(s=>s.id===id); return s ? s.name : id; }
+
+// ---------- attendance actions: each one re-fetches fresh data right before writing ----------
+async function setStatus(studentId, newStatus){
+  const prevDisplayed = state.dayData[studentId] || null;
+  if (newStatus) state.dayData[studentId] = newStatus; else delete state.dayData[studentId];
+  renderStudentList(); renderSummary();
+
+  try {
+    const gist = await gistFetchAll();
+    const dayData = extractDayData(gist, state.currentDate);
+    const trueOld = dayData[studentId] || null;
+    if (newStatus) dayData[studentId] = newStatus; else delete dayData[studentId];
+
+    const stats = extractStats(gist, studentId);
+    if (trueOld && stats[trueOld] > 0) stats[trueOld]--;
+    if (newStatus) stats[newStatus] = (stats[newStatus]||0) + 1;
+
+    await gistPatchFiles({
+      [dayFileName(state.currentDate)]: JSON.stringify(dayData),
+      [statsFileName(studentId)]: JSON.stringify(stats)
+    });
+    state.dayData = dayData;
+    renderStudentList(); renderSummary();
+  } catch(e){
+    showToast('Не сохранилось: ' + e.message);
+    if (prevDisplayed) state.dayData[studentId] = prevDisplayed; else delete state.dayData[studentId];
+    renderStudentList(); renderSummary();
+  }
 }
 
-// ================================================================
-// RENDER FUNCTIONS
-// ================================================================
-function renderStudentList() {
+async function markAllPresent(){
+  try {
+    const gist = await gistFetchAll();
+    const dayData = extractDayData(gist, state.currentDate);
+    const todo = state.roster.students.filter(s => !dayData[s.id]);
+    if (!todo.length){ showToast('Все уже отмечены'); return; }
+    const filesToPatch = {};
+    todo.forEach(s => {
+      dayData[s.id] = 'P';
+      const stats = extractStats(gist, s.id);
+      stats.P = (stats.P||0) + 1;
+      filesToPatch[statsFileName(s.id)] = JSON.stringify(stats);
+    });
+    filesToPatch[dayFileName(state.currentDate)] = JSON.stringify(dayData);
+    await gistPatchFiles(filesToPatch);
+    state.dayData = dayData;
+    renderStudentList(); renderSummary();
+    showToast('Отмечены присутствующими: ' + todo.length);
+  } catch(e){ showToast('Ошибка: ' + e.message); }
+}
+
+async function clearDay(){
+  if (!confirm('Очистить все отметки за этот день?')) return;
+  try {
+    const gist = await gistFetchAll();
+    const dayData = extractDayData(gist, state.currentDate);
+    const todo = state.roster.students.filter(s => dayData[s.id]);
+    if (!todo.length){ showToast('Нет отметок для очистки'); return; }
+    const filesToPatch = {};
+    todo.forEach(s => {
+      const old = dayData[s.id];
+      delete dayData[s.id];
+      const stats = extractStats(gist, s.id);
+      if (stats[old] > 0) stats[old]--;
+      filesToPatch[statsFileName(s.id)] = JSON.stringify(stats);
+    });
+    filesToPatch[dayFileName(state.currentDate)] = JSON.stringify(dayData);
+    await gistPatchFiles(filesToPatch);
+    state.dayData = dayData;
+    renderStudentList(); renderSummary();
+    showToast('День очищен');
+  } catch(e){ showToast('Ошибка: ' + e.message); }
+}
+
+// ---------- rendering ----------
+function renderStudentList(){
   const ul = document.getElementById('studentList');
   const term = state.searchTerm.trim().toLowerCase();
   const filter = state.statusFilter;
-  const dayData = state.dayData[dateKey(state.currentDate)] || {};
-  const items = state.roster.students.filter(s => {
-    if (term && s.name.toLowerCase().indexOf(term) === -1) return false;
-    const st = dayData[s.id] || '';
-    if (filter === 'none' && st !== '') return false;
-    if (filter === 'P' && st !== 'P') return false;
-    if (filter === 'L' && st !== 'L') return false;
-    if (filter === 'A' && st !== 'A') return false;
+  const items = state.roster.students.filter(s=>{
+    if (term && s.name.toLowerCase().indexOf(term)===-1) return false;
+    const st = state.dayData[s.id] || '';
+    if (filter==='none' && st!=='') return false;
+    if (filter==='P' && st!=='P') return false;
+    if (filter==='L' && st!=='L') return false;
+    if (filter==='A' && st!=='A') return false;
     return true;
   });
-  if (!items.length){
-    ul.innerHTML = '<li class="empty-hint">Никого не найдено</li>';
-    return;
-  }
-  ul.innerHTML = items.map(s => {
-    const st = dayData[s.id] || '';
-    const btn = (code, label) => {
-      const active = st === code ? ' active' : '';
+  if (!items.length){ ul.innerHTML = '<li class="empty-hint">Никого не найдено</li>'; return; }
+  ul.innerHTML = items.map(s=>{
+    const st = state.dayData[s.id] || '';
+    const btn = (code,label) => {
+      const active = st===code ? ' active' : '';
       return `<button type="button" class="status-btn ${statusClass(code)}${active}" data-status="${code}">${label}</button>`;
     };
     return `<li class="student-row" data-id="${s.id}">
@@ -272,309 +372,171 @@ function renderStudentList() {
     </li>`;
   }).join('');
 }
-
-function renderSummary() {
+function renderSummary(){
   const total = state.roster.students.length;
-  const dayData = state.dayData[dateKey(state.currentDate)] || {};
   let p=0,l=0,a=0;
-  state.roster.students.forEach(s => {
-    const st = dayData[s.id];
-    if (st === 'P') p++; else if (st === 'L') l++; else if (st === 'A') a++;
-  });
-  const none = total - p - l - a;
+  state.roster.students.forEach(s=>{ const st=state.dayData[s.id]; if(st==='P')p++; else if(st==='L')l++; else if(st==='A')a++; });
+  const none = total-p-l-a;
   document.getElementById('summaryLine').innerHTML = `
     <div class="summary-cell c-present"><span class="num">${p}</span><span class="lbl">Был</span></div>
     <div class="summary-cell c-late"><span class="num">${l}</span><span class="lbl">Опоздал</span></div>
     <div class="summary-cell c-absent"><span class="num">${a}</span><span class="lbl">Не был</span></div>
-    <div class="summary-cell c-none"><span class="num">${none}</span><span class="lbl">Не отмечен</span></div>
-  `;
+    <div class="summary-cell c-none"><span class="num">${none}</span><span class="lbl">Не отмечен</span></div>`;
 }
-
-function renderDateUI() {
+function renderDateUI(){
   document.getElementById('datePicker').value = dateKey(state.currentDate);
   document.getElementById('weekdayLabel').textContent = formatWeekday(state.currentDate);
 }
-
-function renderGroupTitle() {
+function renderGroupTitle(){
   document.getElementById('groupTitleText').textContent = state.groupName || 'Группа';
   document.getElementById('groupNameInput').value = state.groupName || '';
 }
-
-function renderRosterSettings() {
+function renderRosterSettings(){
   const ul = document.getElementById('rosterList');
   document.getElementById('rosterCount').textContent = state.roster.students.length;
-  ul.innerHTML = state.roster.students.map(s => `
-    <li class="roster-row" data-id="${s.id}">
-      <span>${escapeHtml(s.name)}</span>
-      <button class="removeStudentBtn" data-id="${s.id}">✕</button>
-    </li>`).join('');
+  ul.innerHTML = state.roster.students.map(s=>`
+    <li class="roster-row" data-id="${s.id}"><span>${escapeHtml(s.name)}</span>
+      <button type="button" class="removeStudentBtn" data-id="${s.id}">✕</button></li>`).join('');
 }
-
-function renderStats() {
+async function renderStats(){
   const loadingEl = document.getElementById('statsLoading');
   const tableEl = document.getElementById('statsTable');
-  tableEl.hidden = true;
-  loadingEl.hidden = false;
-  loadingEl.textContent = 'Загружаю статистику…';
-  const stats = {};
-  Object.keys(state.dayData).forEach(date => {
-    const day = state.dayData[date];
-    Object.keys(day).forEach(studentId => {
-      if (!stats[studentId]) stats[studentId] = {P:0,L:0,A:0};
-      stats[studentId][day[studentId]] = (stats[studentId][day[studentId]] || 0) + 1;
+  tableEl.hidden = true; loadingEl.hidden = false; loadingEl.textContent = 'Загружаю статистику…';
+  try {
+    const gist = await gistFetchAll();
+    const rows = state.roster.students.map(s=>{
+      const t = extractStats(gist, s.id);
+      const sum = (t.P||0)+(t.L||0)+(t.A||0);
+      const pct = sum>0 ? Math.round((t.P/sum)*100) : null;
+      return { name:s.name, P:t.P||0, L:t.L||0, A:t.A||0, pct, sortKey:(t.L||0)+(t.A||0) };
     });
-  });
-  const rows = state.roster.students.map(s => {
-    const t = stats[s.id] || {P:0,L:0,A:0};
-    const sum = t.P + t.L + t.A;
-    const pct = sum > 0 ? Math.round((t.P/sum)*100) : null;
-    return { name: s.name, P: t.P, L: t.L, A: t.A, pct, sortKey: t.L + t.A };
-  });
-  if (!rows.length) { loadingEl.textContent = 'Нет данных'; return; }
-  rows.sort((a,b) => b.sortKey - a.sortKey);
-  document.getElementById('statsBody').innerHTML = rows.map(r => `
-    <tr>
-      <td>${escapeHtml(r.name)}</td>
-      <td class="num">${r.P}</td>
-      <td class="num">${r.L}</td>
-      <td class="num">${r.A}</td>
-      <td class="num">${r.pct === null ? '—' : r.pct+'%'}</td>
-    </tr>`).join('');
-  loadingEl.hidden = true;
-  tableEl.hidden = false;
+    if (!rows.length){ loadingEl.textContent = 'Список группы пуст'; return; }
+    rows.sort((a,b)=>b.sortKey-a.sortKey);
+    document.getElementById('statsBody').innerHTML = rows.map(r=>`
+      <tr><td>${escapeHtml(r.name)}</td><td class="num">${r.P}</td><td class="num">${r.L}</td><td class="num">${r.A}</td><td class="num">${r.pct===null?'—':r.pct+'%'}</td></tr>`).join('');
+    loadingEl.hidden = true; tableEl.hidden = false;
+  } catch(e){ loadingEl.textContent = 'Ошибка загрузки: ' + e.message; }
 }
 
-// ================================================================
-// Действия
-// ================================================================
-function setStatus(studentId, newStatus) {
-  const key = dateKey(state.currentDate);
-  if (!state.dayData[key]) state.dayData[key] = {};
-  const dayData = state.dayData[key];
-  if (newStatus) dayData[studentId] = newStatus;
-  else delete dayData[studentId];
-  saveToStorage();
-  renderStudentList();
-  renderSummary();
-}
-
-// ================================================================
-// TOAST
-// ================================================================
+// ---------- toast ----------
 let toastTimer = null;
 function showToast(msg){
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3200);
 }
 
-// ================================================================
-// TABS
-// ================================================================
+// ---------- tabs & navigation ----------
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-tab') === name);
-  });
-  document.querySelectorAll('.panel').forEach(p => {
-    p.classList.toggle('active', p.id === 'panel-'+name);
-  });
-  if (name === 'stats') renderStats();
-  if (name === 'settings') renderRosterSettings();
+  document.querySelectorAll('.tab').forEach(btn=>btn.classList.toggle('active', btn.getAttribute('data-tab')===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+name));
+  if (name==='stats') renderStats();
+  if (name==='settings') renderRosterSettings();
 }
-
-// ================================================================
-// DATE NAVIGATION
-// ================================================================
-function goToDate(d) {
+async function goToDate(d){
   state.currentDate = d;
   renderDateUI();
-  renderStudentList();
-  renderSummary();
+  document.getElementById('studentList').innerHTML = '<li class="empty-hint">Загрузка…</li>';
+  try {
+    const gist = await gistFetchAll();
+    state.dayData = extractDayData(gist, d);
+  } catch(e){ showToast('Не удалось загрузить день: ' + e.message); state.dayData = {}; }
+  renderStudentList(); renderSummary();
 }
 
-// ================================================================
-// Экспорт/Импорт
-// ================================================================
-function exportData() {
-  const data = {
-    roster: state.roster,
-    groupName: state.groupName,
-    dayData: state.dayData
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `attendance_${dateKey(new Date())}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('Данные экспортированы');
-}
+// ---------- events ----------
+function setupEvents(){
+  document.getElementById('prevDay').addEventListener('click', ()=>{ const d=new Date(state.currentDate); d.setDate(d.getDate()-1); goToDate(d); });
+  document.getElementById('nextDay').addEventListener('click', ()=>{ const d=new Date(state.currentDate); d.setDate(d.getDate()+1); goToDate(d); });
+  document.getElementById('datePicker').addEventListener('change', e=>{ if(e.target.value) goToDate(parseDateKey(e.target.value)); });
+  document.getElementById('refreshBtn').addEventListener('click', ()=>goToDate(state.currentDate));
 
-function importData(file) {
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (data.roster && data.dayData !== undefined) {
-        state.roster = data.roster;
-        state.groupName = data.groupName || 'Группа';
-        state.dayData = data.dayData || {};
-        saveToStorage();
-        renderAll();
-        showToast('Данные импортированы');
-      } else {
-        showToast('Неверный формат файла');
-      }
-    } catch(err) {
-      showToast('Ошибка чтения файла');
-    }
-  };
-  reader.readAsText(file);
-}
+  document.getElementById('searchInput').addEventListener('input', e=>{ state.searchTerm=e.target.value; renderStudentList(); });
+  document.getElementById('statusFilter').addEventListener('change', e=>{ state.statusFilter=e.target.value; renderStudentList(); });
 
-function renderAll() {
-  renderGroupTitle();
-  renderRosterSettings();
-  renderStudentList();
-  renderSummary();
-}
+  document.getElementById('markAllPresentBtn').addEventListener('click', markAllPresent);
+  document.getElementById('clearDayBtn').addEventListener('click', clearDay);
 
-// ================================================================
-// EVENTS
-// ================================================================
-function setupEvents() {
-  document.getElementById('prevDay').addEventListener('click', () => {
-    const d = new Date(state.currentDate); d.setDate(d.getDate()-1); goToDate(d);
-  });
-  document.getElementById('nextDay').addEventListener('click', () => {
-    const d = new Date(state.currentDate); d.setDate(d.getDate()+1); goToDate(d);
-  });
-  document.getElementById('datePicker').addEventListener('change', e => {
-    if (!e.target.value) return;
-    goToDate(parseDateKey(e.target.value));
-  });
-  document.getElementById('refreshBtn').addEventListener('click', () => {
-    renderAll();
-    showToast('Обновлено');
-  });
-
-  document.getElementById('searchInput').addEventListener('input', e => {
-    state.searchTerm = e.target.value; renderStudentList();
-  });
-  document.getElementById('statusFilter').addEventListener('change', e => {
-    state.statusFilter = e.target.value; renderStudentList();
-  });
-
-  document.getElementById('markAllPresentBtn').addEventListener('click', () => {
-    const key = dateKey(state.currentDate);
-    if (!state.dayData[key]) state.dayData[key] = {};
-    const dayData = state.dayData[key];
-    const todo = state.roster.students.filter(s => !dayData[s.id]);
-    if (!todo.length) { showToast('Все уже отмечены'); return; }
-    todo.forEach(s => dayData[s.id] = 'P');
-    saveToStorage();
-    renderStudentList();
-    renderSummary();
-    showToast('Отмечены присутствующими: ' + todo.length);
-  });
-
-  document.getElementById('clearDayBtn').addEventListener('click', () => {
-    if (!confirm('Очистить все отметки за этот день?')) return;
-    const key = dateKey(state.currentDate);
-    if (state.dayData[key]) {
-      delete state.dayData[key];
-      saveToStorage();
-      renderStudentList();
-      renderSummary();
-      showToast('День очищен');
-    } else {
-      showToast('Нет отметок для очистки');
-    }
-  });
-
-  document.getElementById('studentList').addEventListener('click', e => {
-    const btn = e.target.closest('.status-btn');
-    if (!btn) return;
+  document.getElementById('studentList').addEventListener('click', e=>{
+    const btn = e.target.closest('.status-btn'); if (!btn) return;
     const row = e.target.closest('.student-row');
     const id = row.getAttribute('data-id');
     const status = btn.getAttribute('data-status');
-    const key = dateKey(state.currentDate);
-    const dayData = state.dayData[key] || {};
-    const current = dayData[id] || null;
-    const newStatus = (current === status) ? null : status;
-    setStatus(id, newStatus);
+    const current = state.dayData[id] || null;
+    setStatus(id, current===status ? null : status);
   });
 
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
-  });
+  document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click', ()=>switchTab(btn.getAttribute('data-tab'))));
 
-  document.getElementById('saveGroupNameBtn').addEventListener('click', () => {
+  document.getElementById('saveGroupNameBtn').addEventListener('click', async ()=>{
     const v = document.getElementById('groupNameInput').value.trim();
-    if (v) {
-      state.groupName = v;
-      saveToStorage();
-      renderGroupTitle();
-      showToast('Название сохранено');
-    }
+    try { await gistPatchFiles({ [GROUPNAME_FILE]: v }); state.groupName = v; renderGroupTitle(); showToast('Название сохранено'); }
+    catch(e){ showToast('Ошибка: ' + e.message); }
   });
 
-  document.getElementById('addStudentBtn').addEventListener('click', () => {
+  document.getElementById('addStudentBtn').addEventListener('click', async ()=>{
     const input = document.getElementById('newStudentInput');
     const name = input.value.trim();
     if (!name) return;
-    const id = 's' + state.roster.nextId;
-    state.roster.nextId += 1;
-    state.roster.students.push({ id, name });
-    input.value = '';
-    saveToStorage();
-    renderRosterSettings();
-    renderStudentList();
-    showToast('Добавлено: ' + name);
+    try {
+      const gist = await gistFetchAll();
+      const roster = extractRoster(gist) || state.roster;
+      const id = 's' + roster.nextId; roster.nextId += 1;
+      roster.students.push({id, name});
+      await gistPatchFiles({ [ROSTER_FILE]: JSON.stringify(roster) });
+      state.roster = roster; input.value='';
+      renderRosterSettings(); renderStudentList();
+      showToast('Добавлено: ' + name);
+    } catch(e){ showToast('Ошибка: ' + e.message); }
   });
 
-  document.getElementById('rosterList').addEventListener('click', e => {
-    const btn = e.target.closest('.removeStudentBtn');
-    if (!btn) return;
+  document.getElementById('rosterList').addEventListener('click', async e=>{
+    const btn = e.target.closest('.removeStudentBtn'); if (!btn) return;
     const id = btn.getAttribute('data-id');
-    const name = state.roster.students.find(s => s.id === id)?.name || id;
+    const name = nameById(id);
     if (!confirm(`Удалить ${name} из списка группы?`)) return;
-    state.roster.students = state.roster.students.filter(s => s.id !== id);
-    saveToStorage();
-    renderRosterSettings();
-    renderStudentList();
-    showToast('Удалено: ' + name);
-  });
-
-  document.getElementById('exportDataBtn').addEventListener('click', exportData);
-  document.getElementById('importDataBtn').addEventListener('click', () => {
-    document.getElementById('fileInput').click();
-  });
-  document.getElementById('fileInput').addEventListener('change', e => {
-    if (e.target.files.length) {
-      importData(e.target.files[0]);
-      e.target.value = '';
-    }
+    try {
+      const gist = await gistFetchAll();
+      const roster = extractRoster(gist) || state.roster;
+      roster.students = roster.students.filter(s=>s.id!==id);
+      await gistPatchFiles({ [ROSTER_FILE]: JSON.stringify(roster) });
+      state.roster = roster;
+      renderRosterSettings(); renderStudentList();
+      showToast('Удалено: ' + name);
+    } catch(e){ showToast('Ошибка: ' + e.message); }
   });
 }
 
-// ================================================================
-// INIT
-// ================================================================
-function init() {
-  initData();
-  renderDateUI();
-  renderAll();
-  document.getElementById('loadingOverlay').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  setupEvents();
+// ---------- init ----------
+async function init(){
+  if (!GITHUB_TOKEN || GITHUB_TOKEN === 'ТВОЙ_ТОКЕН'){
+    document.getElementById('loadingOverlay').innerHTML =
+      '<div style="max-width:300px;text-align:center;">Не вставлен токен GitHub. Открой файл и замени ТВОЙ_ТОКЕН на настоящий (см. инструкцию).</div>';
+    return;
+  }
+  try {
+    const gist = await gistFetchAll();
+    let roster = extractRoster(gist);
+    if (!roster){
+      const students = DEFAULT_ROSTER.map((name,i)=>({id:'s'+(i+1), name}));
+      roster = { nextId: students.length+1, students };
+      await gistPatchFiles({ [ROSTER_FILE]: JSON.stringify(roster) });
+    }
+    state.roster = roster;
+    state.groupName = extractGroupName(gist);
+    state.dayData = extractDayData(gist, state.currentDate);
+    renderGroupTitle(); renderDateUI(); renderStudentList(); renderSummary();
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    setupEvents();
+  } catch(e){
+    document.getElementById('loadingOverlay').innerHTML =
+      '<div style="max-width:300px;text-align:center;">Ошибка загрузки: '+escapeHtml(e.message)+'. Проверь GIST_ID и токен в коде.</div>';
+  }
 }
 
 init();
-
 })();
 </script>
 </body>
